@@ -11,9 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.model.CitiesRepoImpl
 import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.view.CityFragment
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
 import com.skysoft.skyweather.viewmodel.AppState
 
@@ -57,7 +59,16 @@ class ListCitiesFragment: Fragment() {
             is AppState.Error -> Toast.makeText(requireContext(), appState.error.message, Toast.LENGTH_SHORT).show()
             is AppState.Loading -> Toast.makeText(requireContext(), "${appState.progress}", Toast.LENGTH_SHORT).show()
             is AppState.Success -> Toast.makeText(requireContext(), appState.weatherData, Toast.LENGTH_SHORT).show()
+            is AppState.CityCard -> openCityCard(appState.city)
         }
+    }
+
+    fun openCityCard(city: City){
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container_framelayout, CityFragment(city))
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun initRecyclerView() {
@@ -67,6 +78,13 @@ class ListCitiesFragment: Fragment() {
             it.recyclerViewCitiesList.layoutManager = linearLayoutManager
             it.recyclerViewCitiesList.adapter = adapter
         }
+        adapter.setClickListener(
+            object : CitiesListAdapter.OnItemClickListener {
+                override fun onItemClick(item: City?, position: Int) {
+                    viewModel.openCityCard(item);
+                }
+            }
+        )
         adapter.setData(CitiesRepoImpl.getCities() as List<City>)
     }
 
