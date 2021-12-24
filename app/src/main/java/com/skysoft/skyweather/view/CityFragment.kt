@@ -35,6 +35,8 @@ class CityFragment(city: City): Fragment() {
     }
 
     fun fillCardCity(city: City){
+        // Почему здесь через binding не получается?
+        //binding.cityNameTextview = city.name
         requireActivity().findViewById<TextView>(R.id.city_name_textview).setText(city.name)
     }
 
