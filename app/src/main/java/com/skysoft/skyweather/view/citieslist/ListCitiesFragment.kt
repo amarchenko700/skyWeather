@@ -1,4 +1,4 @@
-package com.skysoft.skyweather.view
+package com.skysoft.skyweather.view.citieslist
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,11 +8,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
+import com.skysoft.skyweather.model.CitiesRepoImpl
+import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
 import com.skysoft.skyweather.viewmodel.AppState
 
 class ListCitiesFragment: Fragment() {
+
+    private lateinit var adapter: CitiesListAdapter
 
     private var _binding: FragmentCitiesListBinding? = null
     private val binding: FragmentCitiesListBinding
@@ -36,6 +43,8 @@ class ListCitiesFragment: Fragment() {
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, Observer<AppState>{ renderData(it) })
         viewModel.emulateRequest()
+        adapter = CitiesListAdapter()
+        initRecyclerView()
     }
 
     override fun onDestroy() {
@@ -49,6 +58,16 @@ class ListCitiesFragment: Fragment() {
             is AppState.Loading -> Toast.makeText(requireContext(), "${appState.progress}", Toast.LENGTH_SHORT).show()
             is AppState.Success -> Toast.makeText(requireContext(), appState.weatherData, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun initRecyclerView() {
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = RecyclerView.VERTICAL
+        binding.let {
+            it.recyclerViewCitiesList.layoutManager = linearLayoutManager
+            it.recyclerViewCitiesList.adapter = adapter
+        }
+        adapter.setData(CitiesRepoImpl.getCities() as List<City>)
     }
 
     companion object {

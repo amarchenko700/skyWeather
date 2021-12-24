@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
+import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
 
 class MainActivity : AppCompatActivity() {
 

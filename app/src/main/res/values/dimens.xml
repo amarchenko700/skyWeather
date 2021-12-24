@@ -2,4 +2,6 @@
 <resources>
     <dimen name="text_size_splashscreen">45sp</dimen>
     <dimen name="logo_height">92dp</dimen>
+    <dimen name="text_size_city_card">45sp</dimen>
+    <dimen name="text_size_cityitem">32sp</dimen>
 </resources>
