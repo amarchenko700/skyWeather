@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkyWeather">
         <activity
-            android:name=".view.MainActivity"
+            android:name="com.skysoft.skyweather.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

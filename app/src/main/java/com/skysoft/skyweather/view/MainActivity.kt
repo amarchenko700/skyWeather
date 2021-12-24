@@ -6,7 +6,8 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    var _binding: ActivityMainBinding? = null
+
+    private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding
         get() {
             return _binding!!
