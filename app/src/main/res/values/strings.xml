@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">skyWeather</string>
+    <string name="text_splashscreen">Погода в стране</string>
 </resources>

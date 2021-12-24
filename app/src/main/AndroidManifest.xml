@@ -10,13 +10,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkyWeather">
         <activity
-            android:name="com.skysoft.skyweather.view.MainActivity"
+            android:name="com.skysoft.skyweather.view.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.skysoft.skyweather.view.MainActivity"
+            android:exported="false">
         </activity>
     </application>
 

@@ -13,10 +13,11 @@ class ListCitiesViewModel(private val liveData: MutableLiveData<AppState> = Muta
     }
 
     fun emulateRequest(){
+        liveData.value = AppState.Loading(5)
         Thread{
-            liveData.postValue(AppState.Loading(0))
             sleep(3000)
-            liveData.postValue(AppState.Success("Гололед"))
+            val rand = (-10..20).random()
+            liveData.postValue(AppState.Success("Температура за бортом: ${rand}"))
         }.start()
     }
 }
