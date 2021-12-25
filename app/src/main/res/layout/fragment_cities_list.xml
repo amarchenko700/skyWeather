@@ -23,9 +23,7 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:outlineAmbientShadowColor="@color/black"
-            android:outlineSpotShadowColor="@color/white"/>
+            android:layout_gravity="center" />
 
     </FrameLayout>
 </FrameLayout>
