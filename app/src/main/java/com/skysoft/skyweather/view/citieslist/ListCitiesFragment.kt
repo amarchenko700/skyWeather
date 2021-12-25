@@ -4,20 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.model.CitiesRepoImpl
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.view.CityFragment
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
-import com.skysoft.skyweather.viewmodel.AppState
+import com.skysoft.skyweather.view.citieslist.viewmodel.AppState
 
 class ListCitiesFragment: Fragment() {
 
@@ -56,9 +55,19 @@ class ListCitiesFragment: Fragment() {
 
     fun renderData(appState: AppState){
         when(appState){
-            is AppState.Error -> Toast.makeText(requireContext(), appState.error.message, Toast.LENGTH_SHORT).show()
-            is AppState.Loading -> Toast.makeText(requireContext(), "${appState.progress}", Toast.LENGTH_SHORT).show()
-            is AppState.Success -> Toast.makeText(requireContext(), appState.weatherData, Toast.LENGTH_SHORT).show()
+            is AppState.Error -> {
+                binding.loadingLayout.visibility = View.GONE
+                Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
+                    .setAction("Попробовать еще раз"){
+                        viewModel.emulateRequest()
+                    }.show()
+            }
+            is AppState.Loading -> {
+                binding.loadingLayout.visibility = View.VISIBLE
+            }
+            is AppState.Success -> {
+                binding.loadingLayout.visibility = View.GONE
+            }
             is AppState.CityCard -> openCityCard(appState.city)
         }
     }

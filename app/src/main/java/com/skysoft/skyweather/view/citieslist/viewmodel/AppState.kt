@@ -1,4 +1,4 @@
-package com.skysoft.skyweather.viewmodel
+package com.skysoft.skyweather.view.citieslist.viewmodel
 
 import com.skysoft.skyweather.model.City
 
