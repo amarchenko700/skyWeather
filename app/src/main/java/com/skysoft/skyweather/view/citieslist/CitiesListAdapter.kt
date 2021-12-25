@@ -6,63 +6,47 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.skysoft.skyweather.R
+import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
+import com.skysoft.skyweather.databinding.ItemCityBinding
 import com.skysoft.skyweather.model.City
 import java.util.*
 
-class CitiesListAdapter : RecyclerView.Adapter<CitiesListAdapter.CitiesListViewHolder>() {
+class CitiesListAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<CitiesListAdapter.CitiesListViewHolder>() {
 
     private var data: List<City> = ArrayList<City>()
     private lateinit var clickListener: OnItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CitiesListViewHolder {
-        return CitiesListViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_city, parent, false),
-            this
-        )
+        val binding:ItemCityBinding =
+            ItemCityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CitiesListViewHolder(binding.root, this)
+//        return CitiesListViewHolder(
+//            LayoutInflater.from(parent.context).inflate(R.layout.item_city, parent, false),
+//            this
+//        )
     }
 
     override fun onBindViewHolder(holder: CitiesListViewHolder, position: Int) {
-        holder.fillCity(data.get(position))
+        holder.bind(data.get(position))
     }
 
     override fun getItemCount(): Int {
         return data.size
     }
 
-    fun setClickListener(clickListener: OnItemClickListener) {
-        this.clickListener = clickListener
-    }
-
-    fun getClickListener() = clickListener
-
-    fun getItem(position: Int) = data.get(position)
-
     fun setData(data: List<City>) {
         this.data = data
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(item: City?, position: Int)
-    }
-
-    class CitiesListViewHolder(itemView: View, adapter: CitiesListAdapter) :
+    inner class CitiesListViewHolder(itemView: View, adapter: CitiesListAdapter) :
         RecyclerView.ViewHolder(itemView) {
 
-        private var nameCityTextView = itemView.findViewById<TextView>(R.id.name_city_item_city)
-
-        init {
-
-            itemView.setOnClickListener(View.OnClickListener {
-                if (adapter.getClickListener() != null) {
-                    adapter.getClickListener()
-                        .onItemClick(adapter.getItem(adapterPosition), adapterPosition)
-                }
-            })
+        fun bind(city: City){
+            val binding = ItemCityBinding.bind(itemView)
+            binding.nameCityItemCity.setText(city.name)
+            binding.root.setOnClickListener{
+                listener.onItemClick(city)
+            }
         }
-
-        fun fillCity(city: City) {
-            nameCityTextView.text = city.name
-        }
-
     }
 }

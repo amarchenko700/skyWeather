@@ -13,11 +13,11 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.WeatherRepositoryImpl
-import com.skysoft.skyweather.view.citieslist.viewmodel.AppState
-import com.skysoft.skyweather.view.cityweather.CityFragment
+import com.skysoft.skyweather.view.AppState
+import com.skysoft.skyweather.view.weathercard.WeatherFragment
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
 
-class ListCitiesFragment : Fragment() {
+class ListCitiesFragment : Fragment(), OnItemClickListener {
 
     private lateinit var adapter: CitiesListAdapter
 
@@ -42,8 +42,8 @@ class ListCitiesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getWeatherFromServer()
-        adapter = CitiesListAdapter()
+        viewModel.getCities()
+        adapter = CitiesListAdapter(this)
         initRecyclerView()
     }
 
@@ -58,13 +58,13 @@ class ListCitiesFragment : Fragment() {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз") {
-                        viewModel.getWeatherFromServer()
+                        viewModel.getCities()
                     }.show()
             }
             is AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
-            is AppState.Success -> {
+            is AppState.SuccessLoadCities -> {
                 binding.loadingLayout.visibility = View.GONE
             }
             is AppState.openCityCard -> openCityCard(appState.city)
@@ -74,7 +74,7 @@ class ListCitiesFragment : Fragment() {
     private fun openCityCard(city: City) {
         requireActivity().supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container_framelayout, CityFragment(city))
+            .replace(R.id.fragment_container_framelayout, WeatherFragment())
             .addToBackStack(null)
             .commit()
     }
@@ -86,17 +86,14 @@ class ListCitiesFragment : Fragment() {
             it.recyclerViewCitiesList.layoutManager = linearLayoutManager
             it.recyclerViewCitiesList.adapter = adapter
         }
-        adapter.setClickListener(
-            object : CitiesListAdapter.OnItemClickListener {
-                override fun onItemClick(item: City?, position: Int) {
-                    viewModel.openCityCard(item)
-                }
-            }
-        )
         adapter.setData(WeatherRepositoryImpl().getCities() as List<City>)
     }
 
     companion object {
         fun newInstance() = ListCitiesFragment()
+    }
+
+    override fun onItemClick(item: City?) {
+        viewModel.openCityCard(item)
     }
 }
