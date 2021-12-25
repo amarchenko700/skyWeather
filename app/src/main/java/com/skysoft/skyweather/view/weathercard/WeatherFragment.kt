@@ -58,6 +58,8 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
 
     fun fillCardWeather(weather: Weather) {
         binding.cityName.text = weather.city.name
+        binding.feelsLikeValue.text = weather.feelsLike.toString()
+        binding.temperatureValue.text = weather.temperature.toString()
     }
 
     override fun onDestroy() {
