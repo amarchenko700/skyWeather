@@ -1,6 +1,6 @@
 package com.skysoft.skyweather.model
 
-object CitiesRepoImpl {
+class WeatherRepositoryImpl: WeatherRepository {
     private val cacheCities = mutableListOf<City>()
 
     init {
@@ -29,7 +29,15 @@ object CitiesRepoImpl {
         )
     }
 
-    fun getCities(): List<City?>? {
+    fun getCities(): List<City?> {
         return ArrayList<City?>(cacheCities)
+    }
+
+    override fun getWeatherFromServer(): Weather {
+        return Weather()
+    }
+
+    override fun getWeatherFromLocalStorage(): Weather {
+        return Weather()
     }
 }

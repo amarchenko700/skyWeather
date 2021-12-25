@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
-import com.skysoft.skyweather.model.CitiesRepoImpl
+import com.skysoft.skyweather.model.WeatherRepositoryImpl
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.view.cityweather.CityFragment
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
@@ -34,7 +34,7 @@ class ListCitiesFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCitiesListBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -43,7 +43,7 @@ class ListCitiesFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, Observer<AppState>{ renderData(it) })
-        viewModel.getCityWeather()
+        viewModel.getWeatherFromServer()
         adapter = CitiesListAdapter()
         initRecyclerView()
     }
@@ -53,13 +53,13 @@ class ListCitiesFragment: Fragment() {
         _binding = null
     }
 
-    fun renderData(appState: AppState){
+    private fun renderData(appState: AppState){
         when(appState){
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз"){
-                        viewModel.getCityWeather()
+                        viewModel.getWeatherFromServer()
                     }.show()
             }
             is AppState.Loading -> {
@@ -68,11 +68,11 @@ class ListCitiesFragment: Fragment() {
             is AppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
             }
-            is AppState.CityCard -> openCityCard(appState.city)
+            is AppState.openCityCard -> openCityCard(appState.city)
         }
     }
 
-    fun openCityCard(city: City){
+    private fun openCityCard(city: City){
         requireActivity().supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container_framelayout, CityFragment(city))
@@ -94,7 +94,7 @@ class ListCitiesFragment: Fragment() {
                 }
             }
         )
-        adapter.setData(CitiesRepoImpl.getCities() as List<City>)
+        adapter.setData(WeatherRepositoryImpl().getCities() as List<City>)
     }
 
     companion object {
