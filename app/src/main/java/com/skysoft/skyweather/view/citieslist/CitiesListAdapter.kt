@@ -14,16 +14,11 @@ import java.util.*
 class CitiesListAdapter(val listener: OnItemClickListener) : RecyclerView.Adapter<CitiesListAdapter.CitiesListViewHolder>() {
 
     private var data: List<City> = ArrayList<City>()
-    private lateinit var clickListener: OnItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CitiesListViewHolder {
         val binding:ItemCityBinding =
             ItemCityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CitiesListViewHolder(binding.root, this)
-//        return CitiesListViewHolder(
-//            LayoutInflater.from(parent.context).inflate(R.layout.item_city, parent, false),
-//            this
-//        )
     }
 
     override fun onBindViewHolder(holder: CitiesListViewHolder, position: Int) {
