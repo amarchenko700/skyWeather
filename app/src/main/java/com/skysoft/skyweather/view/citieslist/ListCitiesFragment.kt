@@ -14,7 +14,7 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.model.CitiesRepoImpl
 import com.skysoft.skyweather.model.City
-import com.skysoft.skyweather.view.CityFragment
+import com.skysoft.skyweather.view.cityweather.CityFragment
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
 import com.skysoft.skyweather.view.citieslist.viewmodel.AppState
 
@@ -43,7 +43,7 @@ class ListCitiesFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, Observer<AppState>{ renderData(it) })
-        viewModel.emulateRequest()
+        viewModel.getCityWeather()
         adapter = CitiesListAdapter()
         initRecyclerView()
     }
@@ -59,7 +59,7 @@ class ListCitiesFragment: Fragment() {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз"){
-                        viewModel.emulateRequest()
+                        viewModel.getCityWeather()
                     }.show()
             }
             is AppState.Loading -> {

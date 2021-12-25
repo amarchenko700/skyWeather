@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SkyWeather">
         <activity
-            android:name="com.skysoft.skyweather.view.SplashScreenActivity"
+            android:name="com.skysoft.skyweather.view.mainview.SplashScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.skysoft.skyweather.view.MainActivity"
+            android:name="com.skysoft.skyweather.view.mainview.MainActivity"
             android:exported="false">
         </activity>
     </application>

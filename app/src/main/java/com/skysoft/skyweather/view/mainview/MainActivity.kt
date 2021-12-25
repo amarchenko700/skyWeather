@@ -1,4 +1,4 @@
-package com.skysoft.skyweather.view
+package com.skysoft.skyweather.view.mainview
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

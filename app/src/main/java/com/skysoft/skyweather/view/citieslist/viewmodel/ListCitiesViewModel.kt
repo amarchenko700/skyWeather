@@ -13,7 +13,7 @@ class ListCitiesViewModel(private val liveData: MutableLiveData<AppState> = Muta
         return liveData
     }
 
-    fun emulateRequest(){
+    fun getCityWeather(){
         liveData.value = AppState.Loading(5)
         Thread{
             sleep(3000)

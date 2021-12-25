@@ -1,4 +1,4 @@
-package com.skysoft.skyweather.view
+package com.skysoft.skyweather.view.cityweather
 
 import android.os.Bundle
 import android.view.LayoutInflater
