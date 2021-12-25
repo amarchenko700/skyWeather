@@ -5,28 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
-import com.skysoft.skyweather.model.WeatherRepositoryImpl
 import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.model.WeatherRepositoryImpl
+import com.skysoft.skyweather.view.citieslist.viewmodel.AppState
 import com.skysoft.skyweather.view.cityweather.CityFragment
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
-import com.skysoft.skyweather.view.citieslist.viewmodel.AppState
 
-class ListCitiesFragment: Fragment() {
+class ListCitiesFragment : Fragment() {
 
     private lateinit var adapter: CitiesListAdapter
 
     private var _binding: FragmentCitiesListBinding? = null
     private val binding: FragmentCitiesListBinding
-    get() {
-        return _binding!!
-    }
+        get() {
+            return _binding!!
+        }
 
     private lateinit var viewModel: ListCitiesViewModel
 
@@ -42,7 +41,7 @@ class ListCitiesFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner, Observer<AppState>{ renderData(it) })
+        viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
         viewModel.getWeatherFromServer()
         adapter = CitiesListAdapter()
         initRecyclerView()
@@ -53,12 +52,12 @@ class ListCitiesFragment: Fragment() {
         _binding = null
     }
 
-    private fun renderData(appState: AppState){
-        when(appState){
+    private fun renderData(appState: AppState) {
+        when (appState) {
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
-                    .setAction("Попробовать еще раз"){
+                    .setAction("Попробовать еще раз") {
                         viewModel.getWeatherFromServer()
                     }.show()
             }
@@ -72,7 +71,7 @@ class ListCitiesFragment: Fragment() {
         }
     }
 
-    private fun openCityCard(city: City){
+    private fun openCityCard(city: City) {
         requireActivity().supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container_framelayout, CityFragment(city))
@@ -90,7 +89,7 @@ class ListCitiesFragment: Fragment() {
         adapter.setClickListener(
             object : CitiesListAdapter.OnItemClickListener {
                 override fun onItemClick(item: City?, position: Int) {
-                    viewModel.openCityCard(item);
+                    viewModel.openCityCard(item)
                 }
             }
         )
