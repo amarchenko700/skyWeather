@@ -12,10 +12,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.model.Weather
 import com.skysoft.skyweather.model.WeatherRepositoryImpl
 import com.skysoft.skyweather.view.AppState
-import com.skysoft.skyweather.view.weathercard.WeatherFragment
 import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
+import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {
 
@@ -74,7 +75,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     private fun openCityCard(city: City) {
         requireActivity().supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container_framelayout, WeatherFragment())
+            .replace(R.id.fragment_container_framelayout, WeatherFragment(Weather(city)))
             .addToBackStack(null)
             .commit()
     }
@@ -93,7 +94,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         fun newInstance() = ListCitiesFragment()
     }
 
-    override fun onItemClick(item: City?) {
-        viewModel.openCityCard(item)
+    override fun onItemClick(position: Int) {
+        viewModel.openCityCard(adapter.getItemByPosition(position))
     }
 }
