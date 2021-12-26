@@ -33,11 +33,11 @@ class WeatherRepositoryImpl: WeatherRepository {
         return ArrayList<City?>(cacheCities)
     }
 
-    override fun getWeatherFromServer(): Weather {
-        return Weather()
+    override fun getWeatherFromServer(city: City): Weather {
+        return Weather(city)
     }
 
-    override fun getWeatherFromLocalStorage(): Weather {
-        return Weather()
+    override fun getWeatherFromLocalStorage(city: City): Weather {
+        return Weather(city)
     }
 }
