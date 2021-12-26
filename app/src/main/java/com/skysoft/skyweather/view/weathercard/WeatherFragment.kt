@@ -34,7 +34,7 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getWeatherFromServer(weather.city)
+        viewModel.getWeather(weather.city)
     }
 
     private fun renderData(appState: AppState) {
@@ -43,8 +43,7 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewWeather, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз") {
-                        appState.city.requestsCount++
-                        viewModel.getWeatherFromServer(appState.city)
+                        viewModel.getWeather(appState.city)
                     }.show()
             }
             is AppState.LoadingWeather -> {

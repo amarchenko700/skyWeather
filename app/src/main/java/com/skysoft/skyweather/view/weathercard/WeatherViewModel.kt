@@ -25,6 +25,11 @@ class WeatherViewModel(
             }else{
                 liveData.postValue(AppState.Error(IllegalStateException(""), city))
             }
+            city.requestsCount++
         }.start()
+    }
+
+    fun getWeather(city: City) {
+        getWeatherFromServer(city)
     }
 }
