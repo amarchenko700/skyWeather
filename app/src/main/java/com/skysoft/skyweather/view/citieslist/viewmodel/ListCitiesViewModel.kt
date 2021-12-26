@@ -21,10 +21,9 @@ class ListCitiesViewModel(
     }
 
     fun getCities() {
-        liveData.value = AppState.Loading(0)
+        liveData.value = AppState.LoadingCities(0)
         Thread {
             sleep(2000)
-            val rand = (-10..20).random()
             liveData.postValue(AppState.SuccessLoadCities())
         }.start()
     }
