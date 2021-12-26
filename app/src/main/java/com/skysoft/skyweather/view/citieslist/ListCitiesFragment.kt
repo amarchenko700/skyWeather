@@ -62,7 +62,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
                         viewModel.getCities()
                     }.show()
             }
-            is AppState.Loading -> {
+            is AppState.LoadingWeather -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.SuccessLoadCities -> {
