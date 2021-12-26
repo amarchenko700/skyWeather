@@ -17,14 +17,14 @@ class ListCitiesViewModel(
     }
 
     fun openCityCard(city: City?) {
-        liveData.value = AppState.openCityCard(city!!)
+        liveData.value = AppState.OpenCityCard(city!!)
     }
 
     fun getCities() {
         liveData.value = AppState.LoadingCities(0)
         Thread {
             sleep(2000)
-            liveData.postValue(AppState.SuccessLoadCities())
+            liveData.postValue(AppState.SuccessLoadCities)
         }.start()
     }
 }

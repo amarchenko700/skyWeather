@@ -68,7 +68,8 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
             is AppState.SuccessLoadCities -> {
                 binding.loadingLayout.visibility = View.GONE
             }
-            is AppState.openCityCard -> openCityCard(appState.city)
+            is AppState.OpenCityCard -> openCityCard(appState.city)
+            else -> {}
         }
     }
 
