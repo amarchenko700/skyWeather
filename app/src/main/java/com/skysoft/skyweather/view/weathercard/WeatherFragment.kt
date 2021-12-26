@@ -43,6 +43,7 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewWeather, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз") {
+                        appState.city.requestsCount++
                         viewModel.getWeatherFromServer(appState.city)
                     }.show()
             }
@@ -51,6 +52,8 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
             }
             is AppState.SuccessLoadWeather -> {
                 binding.loadingLayout.visibility = View.GONE
+                binding.unavailableWeather.visibility = View.GONE
+                appState.weatherData.city.requestsCount = 0
                 fillCardWeather(appState.weatherData)
             }
         }

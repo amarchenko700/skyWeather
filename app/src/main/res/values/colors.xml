@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background_splashscreen_top">#46BAE3</color>
     <color name="background_splashscreen_bottom">#78DAFD</color>
+    <color name="red">#FF0000</color>
 </resources>

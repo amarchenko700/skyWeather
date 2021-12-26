@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">skyWeather</string>
-    <string name="text_splashscreen">Погода в стране</string>
+    <string name="text_splashscreen">Погода в небе</string>
 
     <string name="temperature_label">Температура</string>
     <string name="feels_like_label">Ощущается как</string>
     <string name="city_coordinates">lt/ln: %s, %s"</string>
     <string name="error">Error</string>
     <string name="reload">Reload</string>
+    <string name="unavailable_weather_text">Ошибка загрузки данных</string>
 </resources>
