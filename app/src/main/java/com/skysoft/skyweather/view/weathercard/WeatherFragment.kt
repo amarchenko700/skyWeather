@@ -34,7 +34,7 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getWeatherFromServer()
+        viewModel.getWeatherFromServer(weather.city)
     }
 
     private fun renderData(appState: AppState) {
@@ -43,23 +43,24 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewWeather, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз") {
-                        viewModel.getWeatherFromServer()
+                        viewModel.getWeatherFromServer(appState.city)
                     }.show()
             }
-            is AppState.Loading -> {
+            is AppState.LoadingWeather -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.SuccessLoadWeather -> {
                 binding.loadingLayout.visibility = View.GONE
-                fillCardWeather(weather)
+                fillCardWeather(appState.weatherData)
             }
         }
     }
 
-    fun fillCardWeather(weather: Weather) {
+    private fun fillCardWeather(weather: Weather) {
         binding.cityName.text = weather.city.name
         binding.feelsLikeValue.text = weather.feelsLike.toString()
         binding.temperatureValue.text = weather.temperature.toString()
+        binding.cityCoordinates.text = "${weather.city.latitude} ${weather.city.longitude}"
     }
 
     override fun onDestroy() {
