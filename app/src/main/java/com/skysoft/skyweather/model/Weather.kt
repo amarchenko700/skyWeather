@@ -2,9 +2,15 @@ package com.skysoft.skyweather.model
 
 data class Weather(
     val city: City = getDefaultCity(),
-    val temperature: Int = 20,
-    val feelsLike: Int = 20
-)
+    var temperature: Int = 20,
+    var feelsLike: Int = 20
+){
+    init {
+        val rand = (-20..20).random()
+        this.temperature = rand
+        this.feelsLike = rand - 2
+    }
+}
 
 data class City(val name: String, val latitude: Double, val longitude: Double, var requestsCount: Int = 1)
 

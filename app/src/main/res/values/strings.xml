@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">skyWeather</string>
-    <string name="text_splashscreen">Погода в небе</string>
+    <string name="text_splashscreen">Погода в небесах</string>
 
     <string name="temperature_label">Температура</string>
     <string name="feels_like_label">Ощущается как</string>
