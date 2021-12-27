@@ -5,11 +5,23 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/darker_gray" />
+
     <TextView
         android:id="@+id/name_city_item_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Name city"
-        android:textSize="@dimen/text_size_cityitem"/>
+        android:textSize="@dimen/text_size_cityitem" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/darker_gray" />
 
 </LinearLayout>
