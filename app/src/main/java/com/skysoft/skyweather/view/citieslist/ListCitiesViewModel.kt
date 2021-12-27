@@ -1,4 +1,4 @@
-package com.skysoft.skyweather.view.viewmodel
+package com.skysoft.skyweather.view.citieslist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

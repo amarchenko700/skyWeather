@@ -15,7 +15,6 @@ import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.Weather
 import com.skysoft.skyweather.model.WeatherRepositoryImpl
 import com.skysoft.skyweather.view.AppState
-import com.skysoft.skyweather.view.viewmodel.ListCitiesViewModel
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {
