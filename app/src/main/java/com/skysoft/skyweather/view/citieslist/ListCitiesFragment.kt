@@ -11,15 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
-import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.Weather
-import com.skysoft.skyweather.model.WeatherRepositoryImpl
 import com.skysoft.skyweather.view.AppState
+import com.skysoft.skyweather.view.weathercard.WEATHER_KEY
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
+
+private const val FRAGMENT_WEATHER_TAG = "FRAGMENT_WEATHER_TAG"
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {
 
-    private lateinit var adapter: CitiesListAdapter
+    private val adapter = CitiesListAdapter(this)
+    private var isRussian = true
+    private var clickedItem: Weather? = null
 
     private var _binding: FragmentCitiesListBinding? = null
     private val binding: FragmentCitiesListBinding
@@ -34,6 +37,9 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        arguments?.let {
+            clickedItem = it.getParcelable(WEATHER_KEY)
+        }
         _binding = FragmentCitiesListBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -42,9 +48,32 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getCities()
-        adapter = CitiesListAdapter(this)
+        binding.listCitiesFAB.setOnClickListener {
+            sentRequest()
+            isRussian = !isRussian
+        }
+        if (savedInstanceState == null) {
+            sentRequest()
+        } else {
+            clickedItem = savedInstanceState.getParcelable(WEATHER_KEY)
+            if (clickedItem == null) {
+                sentRequest()
+            } else {
+                openWeatherData(clickedItem!!)
+            }
+        }
         initRecyclerView()
+    }
+
+    private fun sentRequest() {
+        if (isRussian) {
+            viewModel.getWeatherFromLocalSourceRus()
+            binding.listCitiesFAB.setImageResource(R.drawable.ic_russia)
+        } else {
+            viewModel.getWeatherFromLocalSourceWorld()
+            binding.listCitiesFAB.setImageResource(R.drawable.ic_earth)
+        }
+        renderData(AppState.Loading(0))
     }
 
     override fun onDestroy() {
@@ -58,26 +87,18 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
                 binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз") {
-                        viewModel.getCities()
+                        sentRequest()
                     }.show()
             }
-            is AppState.LoadingWeather -> {
+            is AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
-            is AppState.SuccessLoadCities -> {
+            is AppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
+                adapter.setData(appState.weatherData)
             }
-            is AppState.OpenCityCard -> openCityCard(appState.city)
             else -> {}
         }
-    }
-
-    private fun openCityCard(city: City) {
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragment_container_framelayout, WeatherFragment(Weather(city)))
-            .addToBackStack(null)
-            .commit()
     }
 
     private fun initRecyclerView() {
@@ -87,14 +108,38 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
             it.recyclerViewCitiesList.layoutManager = linearLayoutManager
             it.recyclerViewCitiesList.adapter = adapter
         }
-        adapter.setData(WeatherRepositoryImpl().getCities() as List<City>)
     }
 
     companion object {
         fun newInstance() = ListCitiesFragment()
     }
 
-    override fun onItemClick(position: Int) {
-        viewModel.openCityCard(adapter.getItemByPosition(position))
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(WEATHER_KEY, clickedItem)
+    }
+
+    override fun onItemClick(weather: Weather) {
+        openWeatherData(weather)
+    }
+
+    private fun openWeatherData(weather: Weather) {
+
+        val bundle = Bundle()
+        bundle.putParcelable(WEATHER_KEY, weather)
+        clickedItem = weather
+
+        val weatherFragment =
+            requireActivity().supportFragmentManager.findFragmentByTag(FRAGMENT_WEATHER_TAG)
+                ?: WeatherFragment.newInstance(bundle)
+
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragment_container_framelayout,
+                weatherFragment
+            )
+            .addToBackStack(null)
+            .commit()
     }
 }
