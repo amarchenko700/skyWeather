@@ -11,10 +11,11 @@ import com.skysoft.skyweather.databinding.FragmentWeatherBinding
 import com.skysoft.skyweather.model.Weather
 import com.skysoft.skyweather.view.AppState
 
-class WeatherFragment(weather: Weather = Weather()) : Fragment() {
+const val WEATHER_KEY = "WEATHER_KEY"
+
+class WeatherFragment : Fragment() {
 
     private lateinit var viewModel: WeatherViewModel
-    private var weather: Weather = weather
     private var _binding: FragmentWeatherBinding? = null
     private val binding: FragmentWeatherBinding
         get() {
@@ -32,9 +33,15 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val weather = arguments?.getParcelable<Weather>(WEATHER_KEY)
+        if(weather!=null){
+            fillCardWeather(weather)
+        }
+
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getWeather(weather.city)
+        viewModel.getWeather(weather!!.city)
     }
 
     private fun renderData(appState: AppState) {
@@ -46,7 +53,7 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
                         viewModel.getWeather(appState.city)
                     }.show()
             }
-            is AppState.LoadingWeather -> {
+            is AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
             }
             is AppState.SuccessLoadWeather -> {
@@ -68,6 +75,14 @@ class WeatherFragment(weather: Weather = Weather()) : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(bundle:Bundle):WeatherFragment {
+            val fragment  = WeatherFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
     }
 
 }
