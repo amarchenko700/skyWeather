@@ -48,10 +48,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        binding.listCitiesFAB.setOnClickListener {
-            sentRequest()
-            isRussian = !isRussian
-        }
+        binding.listCitiesFAB.setOnClickListener { onFloatActionButtonClick() }
         if (savedInstanceState == null) {
             sentRequest()
         } else {
@@ -121,6 +118,11 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
 
     override fun onItemClick(weather: Weather) {
         openWeatherData(weather)
+    }
+
+    private fun onFloatActionButtonClick() {
+        sentRequest()
+        isRussian = !isRussian
     }
 
     private fun openWeatherData(weather: Weather) {
