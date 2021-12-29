@@ -83,17 +83,12 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Error -> {
-                binding.loadingLayout.visibility = View.GONE
                 Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
                     .setAction("Попробовать еще раз") {
                         sentRequest()
                     }.show()
             }
-            is AppState.Loading -> {
-                binding.loadingLayout.visibility = View.VISIBLE
-            }
             is AppState.Success -> {
-                binding.loadingLayout.visibility = View.GONE
                 adapter.setData(appState.weatherData)
             }
             else -> {}

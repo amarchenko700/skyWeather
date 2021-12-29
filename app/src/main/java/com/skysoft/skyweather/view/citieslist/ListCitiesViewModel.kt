@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.skysoft.skyweather.model.WeatherRepositoryImpl
 import com.skysoft.skyweather.view.AppState
-import java.lang.Thread.sleep
 
 class ListCitiesViewModel(
     private val liveData: MutableLiveData<AppState> = MutableLiveData(),
@@ -18,19 +17,13 @@ class ListCitiesViewModel(
     }
 
     fun getWeatherFromLocalServer(isRussian: Boolean) {
-        liveData.value = AppState.Loading(0)
-        Thread {
-            sleep(2000)
-            liveData.postValue(
-                AppState.Success(
-                    if (isRussian) {
-                        repositoryImpl.getWeatherFromLocalStorageRus()
-                    } else {
-                        repositoryImpl.getWeatherFromLocalStorageWorld()
-                    }
-                )
-            )
-        }.start()
+        liveData.value = AppState.Success(
+            if (isRussian) {
+                repositoryImpl.getWeatherFromLocalStorageRus()
+            } else {
+                repositoryImpl.getWeatherFromLocalStorageWorld()
+            }
+        )
     }
 
     fun getWeatherFromLocalSourceRus() = getWeatherFromLocalServer(true)
