@@ -8,4 +8,6 @@
     <dimen name="margin_15_dp">15dp</dimen>
     <dimen name="temperature_value_text_size">40sp</dimen>
     <dimen name="feels_like_text_size">30sp</dimen>
+    <dimen name="max_image_size_float_action_button">56dp</dimen>
+    <dimen name="layout_margin_float_action_button">15dp</dimen>
 </resources>

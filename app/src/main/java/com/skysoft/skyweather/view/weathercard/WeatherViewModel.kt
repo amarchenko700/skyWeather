@@ -17,7 +17,7 @@ class WeatherViewModel(
     }
 
     fun getWeatherFromServer(city: City) {
-        liveData.value = AppState.LoadingWeather(city)
+        liveData.value = AppState.Loading(0)
         Thread {
             Thread.sleep(1500)
             if (city.requestsCount >= 2){

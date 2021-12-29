@@ -16,7 +16,8 @@
             android:layout_height="wrap_content"
             android:text="@string/text_splashscreen"
             android:textStyle="bold"
-            android:textSize="@dimen/text_size_splashscreen"/>
+            android:textSize="@dimen/text_size_splashscreen"
+            android:gravity="center"/>
 
     </LinearLayout>
 
