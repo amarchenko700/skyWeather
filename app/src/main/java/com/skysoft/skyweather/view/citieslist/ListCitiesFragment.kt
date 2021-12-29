@@ -17,6 +17,7 @@ import com.skysoft.skyweather.view.weathercard.WEATHER_KEY
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
 private const val FRAGMENT_WEATHER_TAG = "FRAGMENT_WEATHER_TAG"
+private const val IS_RUSSIAN_KEY = "IS_RUSSIAN_KEY"
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {
 
@@ -53,6 +54,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
             sentRequest()
         } else {
             clickedItem = savedInstanceState.getParcelable(WEATHER_KEY)
+            isRussian = savedInstanceState.getBoolean(IS_RUSSIAN_KEY)
             if (clickedItem == null) {
                 sentRequest()
             } else {
@@ -114,6 +116,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(WEATHER_KEY, clickedItem)
+        outState.putBoolean(IS_RUSSIAN_KEY, isRussian)
     }
 
     override fun onItemClick(weather: Weather) {
@@ -121,8 +124,8 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     }
 
     private fun onFloatActionButtonClick() {
-        sentRequest()
         isRussian = !isRussian
+        sentRequest()
     }
 
     private fun openWeatherData(weather: Weather) {
