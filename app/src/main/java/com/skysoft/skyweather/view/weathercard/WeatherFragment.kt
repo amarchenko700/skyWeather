@@ -15,6 +15,7 @@ const val WEATHER_KEY = "WEATHER_KEY"
 
 class WeatherFragment : Fragment() {
 
+    private var weather: Weather? = null
     private lateinit var viewModel: WeatherViewModel
     private var _binding: FragmentWeatherBinding? = null
     private val binding: FragmentWeatherBinding
@@ -34,14 +35,19 @@ class WeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val weather = arguments?.getParcelable<Weather>(WEATHER_KEY)
-        if(weather!=null){
-            fillCardWeather(weather)
-        }
-
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getWeather(weather!!.city)
+
+        if (savedInstanceState != null) {
+            weather = savedInstanceState.getParcelable<Weather>(WEATHER_KEY)
+        } else {
+            weather = arguments?.getParcelable<Weather>(WEATHER_KEY)
+            viewModel.getWeather(weather!!.city)
+        }
+
+        if (weather != null) {
+            fillCardWeather(weather!!)
+        }
     }
 
     private fun renderData(appState: AppState) {
@@ -77,9 +83,14 @@ class WeatherFragment : Fragment() {
         _binding = null
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(WEATHER_KEY, weather)
+    }
+
     companion object {
-        fun newInstance(bundle:Bundle):WeatherFragment {
-            val fragment  = WeatherFragment()
+        fun newInstance(bundle: Bundle): WeatherFragment {
+            val fragment = WeatherFragment()
             fragment.arguments = bundle
             return fragment
         }
