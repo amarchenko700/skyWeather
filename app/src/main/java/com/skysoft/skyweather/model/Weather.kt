@@ -11,8 +11,10 @@ data class Weather(
 ) : Parcelable {
     init {
         val rand = (-20..20).random()
-        this.temperature = rand
-        this.feelsLike = rand - 2
+        this.let {
+            temperature = rand
+            feelsLike = rand - 2
+        }
     }
 }
 

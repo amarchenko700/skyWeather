@@ -45,37 +45,47 @@ class WeatherFragment : Fragment() {
             viewModel.getWeather(weather!!.city)
         }
 
-        if (weather != null) {
-            fillCardWeather(weather!!)
+        weather?.let {
+            fillCardWeather(it)
         }
+
     }
 
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Error -> {
-                binding.loadingLayout.visibility = View.GONE
-                Snackbar.make(binding.mainViewWeather, "Error", Snackbar.LENGTH_LONG)
-                    .setAction("Попробовать еще раз") {
-                        viewModel.getWeather(appState.city)
-                    }.show()
+                binding.run {
+                    loadingLayout.visibility = View.GONE
+                    Snackbar.make(mainViewWeather, "Error", Snackbar.LENGTH_LONG)
+                        .setAction("Попробовать еще раз") {
+                            viewModel.getWeather(appState.city)
+                        }.show()
+                }
             }
             is AppState.Loading -> {
-                binding.loadingLayout.visibility = View.VISIBLE
+                binding.run { loadingLayout.visibility = View.VISIBLE }
             }
             is AppState.SuccessLoadWeather -> {
-                binding.loadingLayout.visibility = View.GONE
-                binding.unavailableWeather.visibility = View.GONE
-                appState.weatherData.city.requestsCount = 0
-                fillCardWeather(appState.weatherData)
+                binding.run {
+                    loadingLayout.visibility = View.GONE
+                    unavailableWeather.visibility = View.GONE
+                }
+                appState.let {
+                    it.weatherData.city.requestsCount = 0
+                    fillCardWeather(it.weatherData)
+                }
+
             }
         }
     }
 
     private fun fillCardWeather(weather: Weather) {
-        binding.cityName.text = weather.city.name
-        binding.feelsLikeValue.text = weather.feelsLike.toString()
-        binding.temperatureValue.text = weather.temperature.toString()
-        binding.cityCoordinates.text = "${weather.city.latitude} ${weather.city.longitude}"
+        binding.run {
+            cityName.text = weather.city.name
+            feelsLikeValue.text = weather.feelsLike.toString()
+            temperatureValue.text = weather.temperature.toString()
+            cityCoordinates.text = "${weather.city.latitude} ${weather.city.longitude}"
+        }
     }
 
     override fun onDestroy() {
@@ -89,11 +99,6 @@ class WeatherFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(bundle: Bundle): WeatherFragment {
-            val fragment = WeatherFragment()
-            fragment.arguments = bundle
-            return fragment
-        }
+        fun newInstance(bundle: Bundle) = WeatherFragment().apply { arguments = bundle }
     }
-
 }

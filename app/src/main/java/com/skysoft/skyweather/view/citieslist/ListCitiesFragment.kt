@@ -16,12 +16,11 @@ import com.skysoft.skyweather.view.AppState
 import com.skysoft.skyweather.view.weathercard.WEATHER_KEY
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
-private const val FRAGMENT_WEATHER_TAG = "FRAGMENT_WEATHER_TAG"
 private const val IS_RUSSIAN_KEY = "IS_RUSSIAN_KEY"
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {
 
-    private val adapter = CitiesListAdapter(this)
+    private val adapter: CitiesListAdapter by lazy { CitiesListAdapter(this) }
     private var isRussian = true
     private var clickedItem: Weather? = null
 
@@ -47,9 +46,10 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         viewModel = ViewModelProvider(this).get(ListCitiesViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        binding.listCitiesFAB.setOnClickListener { onFloatActionButtonClick() }
+
         if (savedInstanceState == null) {
             sentRequest()
         } else {
@@ -61,16 +61,28 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
                 openWeatherData(clickedItem!!)
             }
         }
-        initRecyclerView()
+    }
+
+    fun initView() {
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.orientation = RecyclerView.VERTICAL
+
+        binding.let {
+            it.listCitiesFAB.setOnClickListener { onFloatActionButtonClick() }
+            it.recyclerViewCitiesList.layoutManager = linearLayoutManager
+            it.recyclerViewCitiesList.adapter = adapter
+        }
     }
 
     private fun sentRequest() {
-        if (isRussian) {
-            viewModel.getWeatherFromLocalSourceRus()
-            binding.listCitiesFAB.setImageResource(R.drawable.ic_russia)
-        } else {
-            viewModel.getWeatherFromLocalSourceWorld()
-            binding.listCitiesFAB.setImageResource(R.drawable.ic_earth)
+        with(binding) {
+            if (isRussian) {
+                viewModel.getWeatherFromLocalSourceRus()
+                listCitiesFAB.setImageResource(R.drawable.ic_russia)
+            } else {
+                viewModel.getWeatherFromLocalSourceWorld()
+                listCitiesFAB.setImageResource(R.drawable.ic_earth)
+            }
         }
         renderData(AppState.Loading(0))
     }
@@ -81,26 +93,19 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     }
 
     private fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Error -> {
-                Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
-                    .setAction("Попробовать еще раз") {
-                        sentRequest()
-                    }.show()
+        with(appState) {
+            when (this) {
+                is AppState.Error -> {
+                    Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
+                        .setAction("Попробовать еще раз") {
+                            sentRequest()
+                        }.show()
+                }
+                is AppState.Success -> {
+                    adapter.setData(this.weatherData)
+                }
+                else -> {}
             }
-            is AppState.Success -> {
-                adapter.setData(appState.weatherData)
-            }
-            else -> {}
-        }
-    }
-
-    private fun initRecyclerView() {
-        val linearLayoutManager = LinearLayoutManager(context)
-        linearLayoutManager.orientation = RecyclerView.VERTICAL
-        binding.let {
-            it.recyclerViewCitiesList.layoutManager = linearLayoutManager
-            it.recyclerViewCitiesList.adapter = adapter
         }
     }
 
@@ -110,8 +115,10 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(WEATHER_KEY, clickedItem)
-        outState.putBoolean(IS_RUSSIAN_KEY, isRussian)
+        outState.run {
+            putParcelable(WEATHER_KEY, clickedItem)
+            putBoolean(IS_RUSSIAN_KEY, isRussian)
+        }
     }
 
     override fun onItemClick(weather: Weather) {
@@ -125,21 +132,19 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
 
     private fun openWeatherData(weather: Weather) {
 
-        val bundle = Bundle()
-        bundle.putParcelable(WEATHER_KEY, weather)
         clickedItem = weather
 
-        val weatherFragment =
-            requireActivity().supportFragmentManager.findFragmentByTag(FRAGMENT_WEATHER_TAG)
-                ?: WeatherFragment.newInstance(bundle)
-
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.fragment_container_framelayout,
-                weatherFragment
-            )
-            .addToBackStack(null)
-            .commit()
+        activity?.run {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(
+                    R.id.fragment_container_framelayout,
+                    WeatherFragment.newInstance(Bundle().apply {
+                        putParcelable(WEATHER_KEY, weather)
+                    })
+                )
+                .addToBackStack(null)
+                .commit()
+        }
     }
 }
