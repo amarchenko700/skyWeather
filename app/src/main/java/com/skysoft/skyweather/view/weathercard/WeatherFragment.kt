@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
+import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
+import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.Weather
 import com.skysoft.skyweather.view.AppState
 
@@ -48,7 +50,10 @@ class WeatherFragment : Fragment() {
         weather?.let {
             fillCardWeather(it)
         }
+    }
 
+    private val funAction = fun(city: City) {
+        viewModel.getWeather(city)
     }
 
     private fun renderData(appState: AppState) {
@@ -56,10 +61,10 @@ class WeatherFragment : Fragment() {
             is AppState.Error -> {
                 binding.run {
                     loadingLayout.visibility = View.GONE
-                    Snackbar.make(mainViewWeather, "Error", Snackbar.LENGTH_LONG)
-                        .setAction("Попробовать еще раз") {
-                            viewModel.getWeather(appState.city)
-                        }.show()
+                    root.snackbarWithAction(
+                        getString(R.string.Error), getString(R.string.TryAgain), funAction,
+                        appState.city
+                    )
                 }
             }
             is AppState.Loading -> {
@@ -77,6 +82,16 @@ class WeatherFragment : Fragment() {
 
             }
         }
+    }
+
+    private fun View.snackbarWithAction(
+        textSnackbar: String, textAction: String, funAction: (city: City) -> Unit,
+        city: City
+    ) {
+        Snackbar.make(this, textSnackbar, Snackbar.LENGTH_LONG)
+            .setAction(textAction) {
+                funAction(city)
+            }.show()
     }
 
     private fun fillCardWeather(weather: Weather) {
