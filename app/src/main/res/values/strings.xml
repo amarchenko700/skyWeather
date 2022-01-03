@@ -8,4 +8,6 @@
     <string name="error">Error</string>
     <string name="reload">Reload</string>
     <string name="unavailable_weather_text">Ошибка загрузки данных</string>
+    <string name="TryAgain">Попробовать еще раз</string>
+    <string name="Error">Error</string>
 </resources>

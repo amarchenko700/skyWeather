@@ -95,12 +95,6 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     private fun renderData(appState: AppState) {
         with(appState) {
             when (this) {
-                is AppState.Error -> {
-                    Snackbar.make(binding.mainViewCitiesList, "Error", Snackbar.LENGTH_LONG)
-                        .setAction("Попробовать еще раз") {
-                            sentRequest()
-                        }.show()
-                }
                 is AppState.Success -> {
                     adapter.setData(this.weatherData)
                 }
