@@ -52,18 +52,15 @@ class WeatherFragment : Fragment() {
         }
     }
 
-    private val funAction = fun(city: City) {
-        viewModel.getWeather(city)
-    }
-
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Error -> {
                 binding.run {
                     loadingLayout.visibility = View.GONE
                     root.snackbarWithAction(
-                        getString(R.string.Error), getString(R.string.TryAgain), funAction,
-                        appState.city
+                        getString(R.string.Error), getString(R.string.TryAgain), {
+                            viewModel.getWeather(appState.city)
+                        }
                     )
                 }
             }
@@ -85,12 +82,11 @@ class WeatherFragment : Fragment() {
     }
 
     private fun View.snackbarWithAction(
-        textSnackbar: String, textAction: String, funAction: (city: City) -> Unit,
-        city: City
+        textSnackbar: String, textAction: String, funAction: () -> Unit
     ) {
         Snackbar.make(this, textSnackbar, Snackbar.LENGTH_LONG)
             .setAction(textAction) {
-                funAction(city)
+                funAction()
             }.show()
     }
 
