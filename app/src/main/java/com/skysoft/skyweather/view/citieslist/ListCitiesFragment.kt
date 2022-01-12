@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
-import com.skysoft.skyweather.model.Weather
+import com.skysoft.skyweather.model.CITY_KEY
+import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.view.AppState
 import com.skysoft.skyweather.view.weathercard.WEATHER_KEY
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
@@ -22,7 +22,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
 
     private val adapter: CitiesListAdapter by lazy { CitiesListAdapter(this) }
     private var isRussian = true
-    private var clickedItem: Weather? = null
+    private var clickedItem: City? = null
 
     private var _binding: FragmentCitiesListBinding? = null
     private val binding: FragmentCitiesListBinding
@@ -51,14 +51,14 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
         if (savedInstanceState == null) {
-            sentRequest()
+            showCitisList()
         } else {
             clickedItem = savedInstanceState.getParcelable(WEATHER_KEY)
             isRussian = savedInstanceState.getBoolean(IS_RUSSIAN_KEY)
             if (clickedItem == null) {
-                sentRequest()
+                showCitisList()
             } else {
-                openWeatherData(clickedItem!!)
+                openCityWeatherData(clickedItem!!)
             }
         }
     }
@@ -74,17 +74,15 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    private fun sentRequest() {
+    private fun showCitisList() {
         with(binding) {
             if (isRussian) {
-                viewModel.getWeatherFromLocalSourceRus()
                 listCitiesFAB.setImageResource(R.drawable.ic_russia)
             } else {
-                viewModel.getWeatherFromLocalSourceWorld()
                 listCitiesFAB.setImageResource(R.drawable.ic_earth)
             }
         }
-        renderData(AppState.Loading(0))
+        viewModel.getCitiesList(isRussian)
     }
 
     override fun onDestroy() {
@@ -95,8 +93,8 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     private fun renderData(appState: AppState) {
         with(appState) {
             when (this) {
-                is AppState.Success -> {
-                    adapter.setData(this.weatherData)
+                is AppState.LoadedCitiesList -> {
+                    adapter.setData(this.citiesList)
                 }
                 else -> {}
             }
@@ -115,18 +113,18 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         }
     }
 
-    override fun onItemClick(weather: Weather) {
-        openWeatherData(weather)
+    override fun onItemClick(city: City) {
+        openCityWeatherData(city)
     }
 
     private fun onFloatActionButtonClick() {
         isRussian = !isRussian
-        sentRequest()
+        showCitisList()
     }
 
-    private fun openWeatherData(weather: Weather) {
+    private fun openCityWeatherData(city: City) {
 
-        clickedItem = weather
+        clickedItem = city
 
         activity?.run {
             supportFragmentManager
@@ -134,7 +132,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
                 .replace(
                     R.id.fragment_container_framelayout,
                     WeatherFragment.newInstance(Bundle().apply {
-                        putParcelable(WEATHER_KEY, weather)
+                        putParcelable(CITY_KEY, city)
                     })
                 )
                 .addToBackStack(null)

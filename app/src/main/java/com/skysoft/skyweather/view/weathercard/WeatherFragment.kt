@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
+import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.Weather
 import com.skysoft.skyweather.view.AppState
@@ -17,6 +18,7 @@ const val WEATHER_KEY = "WEATHER_KEY"
 
 class WeatherFragment : Fragment() {
 
+    private var city: City? = null
     private var weather: Weather? = null
     private lateinit var viewModel: WeatherViewModel
     private var _binding: FragmentWeatherBinding? = null
@@ -43,8 +45,8 @@ class WeatherFragment : Fragment() {
         if (savedInstanceState != null) {
             weather = savedInstanceState.getParcelable<Weather>(WEATHER_KEY)
         } else {
-            weather = arguments?.getParcelable<Weather>(WEATHER_KEY)
-            viewModel.getWeather(weather!!.city)
+            city = arguments?.getParcelable<City>(CITY_KEY)
+            viewModel.getWeather(city!!)
         }
 
         weather?.let {
@@ -73,7 +75,6 @@ class WeatherFragment : Fragment() {
                     unavailableWeather.visibility = View.GONE
                 }
                 appState.let {
-                    it.weatherData.city.requestsCount = 0
                     fillCardWeather(it.weatherData)
                 }
 
@@ -92,10 +93,14 @@ class WeatherFragment : Fragment() {
 
     private fun fillCardWeather(weather: Weather) {
         binding.run {
-            cityName.text = weather.city.name
-            feelsLikeValue.text = weather.feelsLike.toString()
-            temperatureValue.text = weather.temperature.toString()
-            cityCoordinates.text = "${weather.city.latitude} ${weather.city.longitude}"
+            city!!.let{
+                cityName.text = it.name
+                cityCoordinates.text = "${it.latitude} ${it.longitude}"
+            }
+            weather.fact.let {
+                feelsLikeValue.text = it.feelsLike.toString()
+                temperatureValue.text = it.temp.toString()
+            }
         }
     }
 

@@ -5,13 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.skysoft.skyweather.databinding.ItemCityBinding
-import com.skysoft.skyweather.model.Weather
+import com.skysoft.skyweather.model.City
 import java.util.*
 
 class CitiesListAdapter(val listener: OnItemClickListener) :
     RecyclerView.Adapter<CitiesListAdapter.CitiesListViewHolder>() {
 
-    private var weatherData: List<Weather> = ArrayList<Weather>()
+    private var citiesList: List<City> = ArrayList<City>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CitiesListViewHolder {
         val binding: ItemCityBinding =
@@ -20,26 +20,26 @@ class CitiesListAdapter(val listener: OnItemClickListener) :
     }
 
     override fun onBindViewHolder(holder: CitiesListViewHolder, position: Int) {
-        holder.bind(this.weatherData[position])
+        holder.bind(this.citiesList[position])
     }
 
     override fun getItemCount(): Int {
-        return weatherData.size
+        return citiesList.size
     }
 
-    fun setData(data: List<Weather>) {
-        this.weatherData = data
+    fun setData(data: List<City>) {
+        this.citiesList = data
         notifyDataSetChanged()
     }
 
     inner class CitiesListViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
 
-        fun bind(weather: Weather) {
+        fun bind(city: City) {
             ItemCityBinding.bind(itemView).let {
-                it.nameCityItemCity.text = weather.city.name
+                it.nameCityItemCity.text = city.name
                 it.root.setOnClickListener {
-                    listener.onItemClick(weatherData[adapterPosition])
+                    listener.onItemClick(citiesList[adapterPosition])
                 }
             }
         }
