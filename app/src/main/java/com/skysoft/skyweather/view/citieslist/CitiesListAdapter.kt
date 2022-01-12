@@ -19,10 +19,6 @@ class CitiesListAdapter(val listener: OnItemClickListener) :
         return CitiesListViewHolder(binding.root)
     }
 
-    fun getItemByPosition(position: Int): Weather {
-        return this.weatherData[position]
-    }
-
     override fun onBindViewHolder(holder: CitiesListViewHolder, position: Int) {
         holder.bind(this.weatherData[position])
     }
@@ -40,10 +36,11 @@ class CitiesListAdapter(val listener: OnItemClickListener) :
         RecyclerView.ViewHolder(itemView) {
 
         fun bind(weather: Weather) {
-            val binding = ItemCityBinding.bind(itemView)
-            binding.nameCityItemCity.text = weather.city.name
-            binding.root.setOnClickListener {
-                listener.onItemClick(weatherData[adapterPosition])
+            ItemCityBinding.bind(itemView).let {
+                it.nameCityItemCity.text = weather.city.name
+                it.root.setOnClickListener {
+                    listener.onItemClick(weatherData[adapterPosition])
+                }
             }
         }
     }

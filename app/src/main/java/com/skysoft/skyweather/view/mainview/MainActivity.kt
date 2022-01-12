@@ -2,12 +2,9 @@ package com.skysoft.skyweather.view.mainview
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
 import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
-
-private const val FRAGMENT_LIST_CITIES_TAG = "FRAGMENT_LIST_CITIES_TAG"
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +18,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        openListCities()
+        if (savedInstanceState == null) {
+            openListCities()
+        }
     }
 
     override fun onDestroy() {
@@ -29,12 +28,13 @@ class MainActivity : AppCompatActivity() {
         _binding = null
     }
 
-    fun openListCities(){
-        val listCitiesFragment =
-            supportFragmentManager.findFragmentByTag(FRAGMENT_LIST_CITIES_TAG) ?: ListCitiesFragment.newInstance()
+    fun openListCities() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container_framelayout, listCitiesFragment, FRAGMENT_LIST_CITIES_TAG)
+            .replace(
+                R.id.fragment_container_framelayout,
+                ListCitiesFragment.newInstance()
+            )
             .commit()
     }
 }

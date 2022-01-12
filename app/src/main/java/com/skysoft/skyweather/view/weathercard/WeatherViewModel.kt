@@ -20,10 +20,18 @@ class WeatherViewModel(
         liveData.value = AppState.Loading(0)
         Thread {
             Thread.sleep(1500)
-            if (city.requestsCount >= 2){
-                liveData.postValue(AppState.SuccessLoadWeather(repositoryImpl.getWeatherFromServer(city)))
-            }else{
-                liveData.postValue(AppState.Error(IllegalStateException(""), city))
+            with(liveData) {
+                if (city.requestsCount >= 2) {
+                    postValue(
+                        AppState.SuccessLoadWeather(
+                            repositoryImpl.getWeatherFromServer(
+                                city
+                            )
+                        )
+                    )
+                } else {
+                    postValue(AppState.Error(IllegalStateException(""), city))
+                }
             }
             city.requestsCount++
         }.start()

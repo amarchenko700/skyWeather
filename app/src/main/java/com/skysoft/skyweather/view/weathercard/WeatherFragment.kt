@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
+import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
+import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.Weather
 import com.skysoft.skyweather.view.AppState
 
@@ -15,6 +17,7 @@ const val WEATHER_KEY = "WEATHER_KEY"
 
 class WeatherFragment : Fragment() {
 
+    private var weather: Weather? = null
     private lateinit var viewModel: WeatherViewModel
     private var _binding: FragmentWeatherBinding? = null
     private val binding: FragmentWeatherBinding
@@ -34,42 +37,66 @@ class WeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val weather = arguments?.getParcelable<Weather>(WEATHER_KEY)
-        if(weather!=null){
-            fillCardWeather(weather)
-        }
-
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
-        viewModel.getWeather(weather!!.city)
+
+        if (savedInstanceState != null) {
+            weather = savedInstanceState.getParcelable<Weather>(WEATHER_KEY)
+        } else {
+            weather = arguments?.getParcelable<Weather>(WEATHER_KEY)
+            viewModel.getWeather(weather!!.city)
+        }
+
+        weather?.let {
+            fillCardWeather(it)
+        }
     }
 
     private fun renderData(appState: AppState) {
         when (appState) {
             is AppState.Error -> {
-                binding.loadingLayout.visibility = View.GONE
-                Snackbar.make(binding.mainViewWeather, "Error", Snackbar.LENGTH_LONG)
-                    .setAction("Попробовать еще раз") {
-                        viewModel.getWeather(appState.city)
-                    }.show()
+                binding.run {
+                    loadingLayout.visibility = View.GONE
+                    root.snackbarWithAction(
+                        getString(R.string.Error), getString(R.string.TryAgain), {
+                            viewModel.getWeather(appState.city)
+                        }
+                    )
+                }
             }
             is AppState.Loading -> {
-                binding.loadingLayout.visibility = View.VISIBLE
+                binding.run { loadingLayout.visibility = View.VISIBLE }
             }
             is AppState.SuccessLoadWeather -> {
-                binding.loadingLayout.visibility = View.GONE
-                binding.unavailableWeather.visibility = View.GONE
-                appState.weatherData.city.requestsCount = 0
-                fillCardWeather(appState.weatherData)
+                binding.run {
+                    loadingLayout.visibility = View.GONE
+                    unavailableWeather.visibility = View.GONE
+                }
+                appState.let {
+                    it.weatherData.city.requestsCount = 0
+                    fillCardWeather(it.weatherData)
+                }
+
             }
         }
     }
 
+    private fun View.snackbarWithAction(
+        textSnackbar: String, textAction: String, funAction: () -> Unit
+    ) {
+        Snackbar.make(this, textSnackbar, Snackbar.LENGTH_LONG)
+            .setAction(textAction) {
+                funAction()
+            }.show()
+    }
+
     private fun fillCardWeather(weather: Weather) {
-        binding.cityName.text = weather.city.name
-        binding.feelsLikeValue.text = weather.feelsLike.toString()
-        binding.temperatureValue.text = weather.temperature.toString()
-        binding.cityCoordinates.text = "${weather.city.latitude} ${weather.city.longitude}"
+        binding.run {
+            cityName.text = weather.city.name
+            feelsLikeValue.text = weather.feelsLike.toString()
+            temperatureValue.text = weather.temperature.toString()
+            cityCoordinates.text = "${weather.city.latitude} ${weather.city.longitude}"
+        }
     }
 
     override fun onDestroy() {
@@ -77,12 +104,12 @@ class WeatherFragment : Fragment() {
         _binding = null
     }
 
-    companion object {
-        fun newInstance(bundle:Bundle):WeatherFragment {
-            val fragment  = WeatherFragment()
-            fragment.arguments = bundle
-            return fragment
-        }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(WEATHER_KEY, weather)
     }
 
+    companion object {
+        fun newInstance(bundle: Bundle) = WeatherFragment().apply { arguments = bundle }
+    }
 }
