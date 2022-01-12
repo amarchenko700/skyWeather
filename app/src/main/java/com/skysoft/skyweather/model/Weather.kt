@@ -1,59 +1,132 @@
 package com.skysoft.skyweather.model
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Weather(
-    val city: City = getDefaultCity(),
-    var temperature: Int = 20,
-    var feelsLike: Int = 20
-) : Parcelable {
-    init {
-        val rand = (-20..20).random()
-        this.let {
-            temperature = rand
-            feelsLike = rand - 2
-        }
-    }
-}
+    val now: Long,
+
+   @SerializedName( "now_dt")
+    val nowDt: String,
+
+    val info: Info,
+    val fact: Fact,
+    val forecast: Forecast
+
+) : Parcelable
 
 @Parcelize
-data class City(
-    val name: String,
-    val latitude: Double,
-    val longitude: Double,
-    var requestsCount: Int = 1
+data class Fact (
+   @SerializedName( "obs_time")
+    val obsTime: Long,
+
+    val temp: Long,
+
+   @SerializedName( "feels_like")
+    val feelsLike: Long,
+
+    val icon: String,
+    val condition: String,
+
+   @SerializedName( "wind_speed")
+    val windSpeed: Double,
+
+   @SerializedName( "wind_dir")
+    val windDir: String,
+
+   @SerializedName( "pressure_mm")
+    val pressureMm: Long,
+
+   @SerializedName( "pressure_pa")
+    val pressurePa: Long,
+
+    val humidity: Long,
+    val daytime: String,
+    val polar: Boolean,
+    val season: String,
+
+   @SerializedName( "wind_gust")
+    val windGust: Double
+) : Parcelable
+
+@Parcelize
+data class Forecast (
+    val date: String,
+
+   @SerializedName( "date_ts")
+    val dateTs: Long,
+
+    val week: Long,
+    val sunrise: String,
+    val sunset: String,
+
+   @SerializedName( "moon_code")
+    val moonCode: Long,
+
+   @SerializedName( "moon_text")
+    val moonText: String,
+
+    val parts: List<Part>
+) : Parcelable
+
+@Parcelize
+data class Part (
+   @SerializedName( "part_name")
+    val partName: String,
+
+   @SerializedName( "temp_min")
+    val tempMin: Long,
+
+   @SerializedName( "temp_avg")
+    val tempAvg: Long,
+
+   @SerializedName( "temp_max")
+    val tempMax: Long,
+
+   @SerializedName( "wind_speed")
+    val windSpeed: Double,
+
+   @SerializedName( "wind_gust")
+    val windGust: Double,
+
+   @SerializedName( "wind_dir")
+    val windDir: String,
+
+   @SerializedName( "pressure_mm")
+    val pressureMm: Long,
+
+   @SerializedName( "pressure_pa")
+    val pressurePa: Long,
+
+    val humidity: Long,
+
+   @SerializedName( "prec_mm")
+    val precMm: Double,
+
+   @SerializedName( "prec_prob")
+    val precProb: Long,
+
+   @SerializedName( "prec_period")
+    val precPeriod: Long,
+
+    val icon: String,
+    val condition: String,
+
+   @SerializedName( "feels_like")
+    val feelsLike: Long,
+
+    val daytime: String,
+    val polar: Boolean
+) : Parcelable
+
+@Parcelize
+data class Info (
+    val url: String,
+    val lat: Long,
+    val lon: Long
 ) : Parcelable
 
 fun getDefaultCity() = City("Москва", 55.7382489349867, 37.63742208612825)
 
-fun getWorldCities(): List<Weather> {
-    return listOf(
-        Weather(City("Лондон", 51.5085300, -0.1257400), 1, 2),
-        Weather(City("Токио", 35.6895000, 139.6917100), 3, 4),
-        Weather(City("Париж", 48.8534100, 2.3488000), 5, 6),
-        Weather(City("Берлин", 52.52000659999999, 13.404953999999975), 7, 8),
-        Weather(City("Рим", 41.9027835, 12.496365500000024), 9, 10),
-        Weather(City("Минск", 53.90453979999999, 27.561524400000053), 11, 12),
-        Weather(City("Стамбул", 41.0082376, 28.97835889999999), 13, 14),
-        Weather(City("Вашингтон", 38.9071923, -77.03687070000001), 15, 16),
-        Weather(City("Киев", 50.4501, 30.523400000000038), 17, 18),
-        Weather(City("Пекин", 39.90419989999999, 116.40739630000007), 19, 20)
-    )
-}
-
-fun getRussianCities(): List<Weather> {
-    return listOf(
-        Weather(City("Москва", 55.755826, 37.617299900000035), 1, 2),
-        Weather(City("Санкт-Петербург", 59.9342802, 30.335098600000038), 3, 3),
-        Weather(City("Новосибирск", 55.00835259999999, 82.93573270000002), 5, 6),
-        Weather(City("Екатеринбург", 56.83892609999999, 60.60570250000001), 7, 8),
-        Weather(City("Нижний Новгород", 56.2965039, 43.936059), 9, 10),
-        Weather(City("Казань", 55.8304307, 49.06608060000008), 11, 12),
-        Weather(City("Челябинск", 55.1644419, 61.4368432), 13, 14),
-        Weather(City("Омск", 54.9884804, 73.32423610000001), 15, 16),
-        Weather(City("Ростов-на-Дону", 47.2357137, 39.701505), 17, 18),
-        Weather(City("Уфа", 54.7387621, 55.972055400000045), 19, 20)
-    )
-}
