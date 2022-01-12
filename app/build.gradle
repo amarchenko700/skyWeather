@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.skysoft.skyweather"
-        minSdk 23
+        minSdk 24
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -45,4 +45,6 @@ dependencies {
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
+
+    implementation 'com.google.code.gson:gson:2.8.8'
 }
