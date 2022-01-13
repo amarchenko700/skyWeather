@@ -36,7 +36,7 @@ class WeatherViewModel(
             val urlConnection = (url.openConnection() as HttpsURLConnection).apply {
                 requestMethod = "GET"
                 readTimeout = 10000
-                addRequestProperty("Yandex-API-Key", "76597d0d-a647-418e-9e6e-d0f0a7be6d9c")
+                addRequestProperty("X-Yandex-API-Key", "76597d0d-a647-418e-9e6e-d0f0a7be6d9c")
             }
             try {
                 val inputStreamReader = InputStreamReader(urlConnection.inputStream)
