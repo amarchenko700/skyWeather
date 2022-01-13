@@ -2,11 +2,9 @@ package com.skysoft.skyweather.view.weathercard
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.Weather
@@ -16,7 +14,6 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.stream.Collectors
 import javax.net.ssl.HttpsURLConnection
-import kotlin.math.log
 
 class WeatherViewModel(
     private val liveData: MutableLiveData<AppState> = MutableLiveData(),
@@ -39,8 +36,7 @@ class WeatherViewModel(
                 addRequestProperty("X-Yandex-API-Key", "76597d0d-a647-418e-9e6e-d0f0a7be6d9c")
             }
             try {
-                val inputStreamReader = InputStreamReader(urlConnection.inputStream)
-                val reader = BufferedReader(inputStreamReader)
+                val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
                 val weather = Gson().fromJson(getLines(reader), Weather::class.java)
                 handler.post {
                     liveData.postValue(AppState.SuccessLoadWeather(weather))
