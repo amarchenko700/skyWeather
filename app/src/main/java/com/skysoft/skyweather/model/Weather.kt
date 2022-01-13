@@ -124,8 +124,8 @@ data class Part (
 @Parcelize
 data class Info (
     val url: String,
-    val lat: Long,
-    val lon: Long
+    val lat: Double,
+    val lon: Double
 ) : Parcelable
 
 fun getDefaultCity() = City("Москва", 55.7382489349867, 37.63742208612825)

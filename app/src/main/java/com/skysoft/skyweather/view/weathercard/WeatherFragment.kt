@@ -59,6 +59,7 @@ class WeatherFragment : Fragment() {
             is AppState.Error -> {
                 binding.run {
                     loadingLayout.visibility = View.GONE
+                    tvDesriptionError.text = appState.error.toString()
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             viewModel.getWeather(appState.city)
