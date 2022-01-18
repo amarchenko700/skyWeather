@@ -6,8 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.skysoft.skyweather.BuildConfig
 import com.skysoft.skyweather.model.City
-import com.skysoft.skyweather.model.Weather
+import com.skysoft.skyweather.model.WeatherDTO
 import com.skysoft.skyweather.view.AppState
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -23,7 +24,7 @@ class WeatherViewModel(
         return liveData
     }
 
-    fun getWeatherFromServer(city: City) {
+    private fun getWeatherFromServer(city: City) {
         liveData.value = AppState.Loading(0)
         val handler = Handler(Looper.getMainLooper()!!)
         Thread {
@@ -32,11 +33,11 @@ class WeatherViewModel(
             val urlConnection = (url.openConnection() as HttpsURLConnection).apply {
                 requestMethod = "GET"
                 readTimeout = 10000
-                addRequestProperty("X-Yandex-API-Key", "76597d0d-a647-418e-9e6e-d0f0a7be6d9c")
+                addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
             }
             try {
                 val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
-                val weather = Gson().fromJson(getLines(reader), Weather::class.java)
+                val weather = Gson().fromJson(getLines(reader), WeatherDTO::class.java)
                 handler.post {
                     liveData.postValue(AppState.SuccessLoadWeather(weather))
                 }
