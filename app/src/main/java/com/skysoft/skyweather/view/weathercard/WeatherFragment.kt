@@ -44,6 +44,7 @@ class WeatherFragment : Fragment() {
 
         if (savedInstanceState != null) {
             weather = savedInstanceState.getParcelable<Weather>(WEATHER_KEY)
+            city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
             city = arguments?.getParcelable<City>(CITY_KEY)
             viewModel.getWeather(city!!)
@@ -76,6 +77,7 @@ class WeatherFragment : Fragment() {
                     unavailableWeather.visibility = View.GONE
                 }
                 appState.let {
+                    weather = it.weatherData
                     fillCardWeather(it.weatherData)
                 }
 
@@ -113,6 +115,7 @@ class WeatherFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable(WEATHER_KEY, weather)
+        outState.putParcelable(CITY_KEY, city)
     }
 
     companion object {

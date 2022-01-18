@@ -16,8 +16,7 @@ import java.util.stream.Collectors
 import javax.net.ssl.HttpsURLConnection
 
 class WeatherViewModel(
-    private val liveData: MutableLiveData<AppState> = MutableLiveData(),
-
+    private val liveData: MutableLiveData<AppState> = MutableLiveData()
     ) : ViewModel() {
 
     fun getLiveData(): LiveData<AppState> {
