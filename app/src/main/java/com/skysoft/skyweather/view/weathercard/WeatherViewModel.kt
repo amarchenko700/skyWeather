@@ -59,4 +59,5 @@ class WeatherViewModel(
     fun getWeather(city: City) {
         getWeatherFromServer(city)
     }
+
 }

@@ -40,12 +40,12 @@ class WeatherFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
         if (savedInstanceState != null) {
             weatherDTO = savedInstanceState.getParcelable<WeatherDTO>(WEATHER_KEY)
             city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
+            viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
             city = arguments?.getParcelable<City>(CITY_KEY)
             viewModel.getWeather(city!!)
         }
@@ -72,15 +72,10 @@ class WeatherFragment : Fragment() {
                 binding.run { loadingLayout.visibility = View.VISIBLE }
             }
             is AppState.SuccessLoadWeather -> {
-                binding.run {
-                    loadingLayout.visibility = View.GONE
-                    unavailableWeather.visibility = View.GONE
-                }
                 appState.let {
                     weatherDTO = it.weatherDTO
                     fillCardWeather(it.weatherDTO)
                 }
-
             }
         }
     }
@@ -96,6 +91,8 @@ class WeatherFragment : Fragment() {
 
     private fun fillCardWeather(weatherDTO: WeatherDTO) {
         binding.run {
+            loadingLayout.visibility = View.GONE
+            unavailableWeather.visibility = View.GONE
             city!!.let{
                 cityName.text = it.name
                 cityCoordinates.text = "${it.latitude} ${it.longitude}"
