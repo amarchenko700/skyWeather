@@ -14,8 +14,6 @@ import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.WeatherDTO
 import com.skysoft.skyweather.view.AppState
 
-const val WEATHER_KEY = "WEATHER_KEY"
-
 class WeatherFragment : Fragment() {
 
     private var city: City? = null

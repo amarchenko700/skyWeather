@@ -12,11 +12,10 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.model.IS_RUSSIAN_KEY
+import com.skysoft.skyweather.model.WEATHER_KEY
 import com.skysoft.skyweather.view.AppState
-import com.skysoft.skyweather.view.weathercard.WEATHER_KEY
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
-
-private const val IS_RUSSIAN_KEY = "IS_RUSSIAN_KEY"
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {
 
