@@ -1,5 +1,6 @@
 package com.skysoft.skyweather.view.weathercard
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
@@ -15,6 +16,15 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.util.stream.Collectors
 import javax.net.ssl.HttpsURLConnection
+import androidx.core.content.ContextCompat.getSystemService
+
+import android.net.ConnectivityManager
+import androidx.core.content.ContextCompat
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import com.skysoft.skyweather.utils.MyWorker
+
 
 class WeatherViewModel(
     private val liveData: MutableLiveData<AppState> = MutableLiveData()
@@ -24,7 +34,13 @@ class WeatherViewModel(
         return liveData
     }
 
-    private fun getWeatherFromServer(city: City) {
+    private fun getWeatherFromServer(city: City, context: Context) {
+        val manager = WorkManager.getInstance(context)
+        val worker = OneTimeWorkRequest.Builder(MyWorker::class.java)
+            //   .setInitialDelay(5, TimeUnit.SECONDS)
+            .build()
+        manager.enqueue(worker)
+
         liveData.value = AppState.Loading(0)
         val handler = Handler(Looper.getMainLooper()!!)
         Thread {
@@ -56,8 +72,8 @@ class WeatherViewModel(
         return reader.lines().collect(Collectors.joining("\n"))
     }
 
-    fun getWeather(city: City) {
-        getWeatherFromServer(city)
+    fun getWeather(city: City, context: Context) {
+        getWeatherFromServer(city, context)
     }
 
 }

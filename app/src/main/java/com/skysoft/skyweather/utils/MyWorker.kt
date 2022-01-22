@@ -8,6 +8,7 @@ import androidx.work.WorkerParameters
 class MyWorker(context: Context, workerParameters: WorkerParameters) :
     Worker(context, workerParameters) {
     override fun doWork(): Result {
+
         Log.d("myLogs", "i am starting")
         return Result.success()
     }

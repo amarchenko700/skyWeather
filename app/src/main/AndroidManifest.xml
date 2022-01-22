@@ -3,6 +3,7 @@
     package="com.skysoft.skyweather">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +25,7 @@
             android:exported="false" />
 
         <receiver
-            android:name=".utils.HasInternet"
+            android:name=".utils.MyReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.AIRPLANE_MODE" />
