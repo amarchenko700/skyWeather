@@ -1,14 +1,16 @@
 package com.skysoft.skyweather.view.mainview
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
-import com.skysoft.skyweather.utils.MyService
+import com.skysoft.skyweather.utils.HasInternet
+import com.skysoft.skyweather.utils.MyWorker
 import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         get() {
             return _binding!!
         }
+    private val receiver = HasInternet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,15 +29,18 @@ class MainActivity : AppCompatActivity() {
             openListCities()
         }
         val manager = WorkManager.getInstance(this)
-        val worker = OneTimeWorkRequest.Builder(MyService::class.java)
+        val worker = OneTimeWorkRequest.Builder(MyWorker::class.java)
          //   .setInitialDelay(5, TimeUnit.SECONDS)
             .build()
         manager.enqueue(worker)
+
+        registerReceiver(receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        unregisterReceiver(receiver)
     }
 
     fun openListCities() {
