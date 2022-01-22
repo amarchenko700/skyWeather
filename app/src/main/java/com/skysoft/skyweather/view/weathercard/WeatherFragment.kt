@@ -9,15 +9,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
+import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
-import com.skysoft.skyweather.model.Weather
+import com.skysoft.skyweather.model.WeatherDTO
 import com.skysoft.skyweather.view.AppState
 
 const val WEATHER_KEY = "WEATHER_KEY"
 
 class WeatherFragment : Fragment() {
 
-    private var weather: Weather? = null
+    private var city: City? = null
+    private var weatherDTO: WeatherDTO? = null
     private lateinit var viewModel: WeatherViewModel
     private var _binding: FragmentWeatherBinding? = null
     private val binding: FragmentWeatherBinding
@@ -41,13 +43,14 @@ class WeatherFragment : Fragment() {
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
         if (savedInstanceState != null) {
-            weather = savedInstanceState.getParcelable<Weather>(WEATHER_KEY)
+            weatherDTO = savedInstanceState.getParcelable<WeatherDTO>(WEATHER_KEY)
+            city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
-            weather = arguments?.getParcelable<Weather>(WEATHER_KEY)
-            viewModel.getWeather(weather!!.city)
+            city = arguments?.getParcelable<City>(CITY_KEY)
+            viewModel.getWeather(city!!)
         }
 
-        weather?.let {
+        weatherDTO?.let {
             fillCardWeather(it)
         }
     }
@@ -57,6 +60,7 @@ class WeatherFragment : Fragment() {
             is AppState.Error -> {
                 binding.run {
                     loadingLayout.visibility = View.GONE
+                    tvDesriptionError.text = appState.error.toString()
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             viewModel.getWeather(appState.city)
@@ -73,8 +77,8 @@ class WeatherFragment : Fragment() {
                     unavailableWeather.visibility = View.GONE
                 }
                 appState.let {
-                    it.weatherData.city.requestsCount = 0
-                    fillCardWeather(it.weatherData)
+                    weatherDTO = it.weatherDTO
+                    fillCardWeather(it.weatherDTO)
                 }
 
             }
@@ -90,12 +94,16 @@ class WeatherFragment : Fragment() {
             }.show()
     }
 
-    private fun fillCardWeather(weather: Weather) {
+    private fun fillCardWeather(weatherDTO: WeatherDTO) {
         binding.run {
-            cityName.text = weather.city.name
-            feelsLikeValue.text = weather.feelsLike.toString()
-            temperatureValue.text = weather.temperature.toString()
-            cityCoordinates.text = "${weather.city.latitude} ${weather.city.longitude}"
+            city!!.let{
+                cityName.text = it.name
+                cityCoordinates.text = "${it.latitude} ${it.longitude}"
+            }
+            weatherDTO.fact.let {
+                feelsLikeValue.text = it.feelsLike.toString()
+                temperatureValue.text = it.temp.toString()
+            }
         }
     }
 
@@ -106,7 +114,8 @@ class WeatherFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(WEATHER_KEY, weather)
+        outState.putParcelable(WEATHER_KEY, weatherDTO)
+        outState.putParcelable(CITY_KEY, city)
     }
 
     companion object {
