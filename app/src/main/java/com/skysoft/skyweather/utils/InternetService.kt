@@ -2,6 +2,7 @@ package com.skysoft.skyweather.utils
 
 import android.app.IntentService
 import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.gson.Gson
 import com.skysoft.skyweather.BuildConfig
 import com.skysoft.skyweather.model.*
@@ -26,17 +27,25 @@ class InternetService(name: String = "") : IntentService(name) {
         val urlConnection = (url.openConnection() as HttpsURLConnection).apply {
             requestMethod = "GET"
             readTimeout = 10000
-            addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
+            addRequestProperty(YANDEX_API_KEY, BuildConfig.WEATHER_API_KEY)
         }
 
         try {
             val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
             val weatherDTO = Gson().fromJson(getLines(reader), WeatherDTO::class.java)
+//            LocalBroadcastManager.getInstance(applicationContext)
+//                .sendBroadcast(Intent(ACTION_ON_LOAD_WEATHER).apply {
+//                    this.putExtra(WEATHER_KEY, weatherDTO)
+//                })
             sendBroadcast(Intent(ACTION_ON_LOAD_WEATHER).apply {
                 this.putExtra(WEATHER_KEY, weatherDTO)
             })
 
         } catch (e: Exception) {
+//            LocalBroadcastManager.getInstance(applicationContext)
+//                .sendBroadcast(Intent(ACTION_ON_ERROR_LOAD_WEATHER).apply {
+//                    this.putExtra(ERROR_KEY, e.toString())
+//                })
             sendBroadcast(Intent(ACTION_ON_ERROR_LOAD_WEATHER).apply {
                 this.putExtra(ERROR_KEY, e.toString())
             })

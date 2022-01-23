@@ -13,6 +13,7 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.utils.InternetService
 import com.skysoft.skyweather.view.AppState
+import java.util.*
 
 class WeatherViewModel(
     private val liveData: MutableLiveData<AppState> = MutableLiveData()
@@ -47,7 +48,7 @@ class WeatherViewModel(
                 it.getBooleanExtra("state", false).let { stateAM ->
                     if (!stateAM) {
                         Toast.makeText(context, "Появился интернет!", Toast.LENGTH_SHORT).show()
-                        getWeatherFromServer(cityToLoad, context!!)
+                        Timer().schedule(RemindTaskRequestToServer(context), 7000)
                     }
                 }
             } else if (it.action == ACTION_ON_LOAD_WEATHER) {
@@ -80,6 +81,12 @@ class WeatherViewModel(
             val networkInfo =
                 connectivityManager.activeNetworkInfo ?: return false
             return networkInfo.isConnected
+        }
+    }
+
+    inner class RemindTaskRequestToServer(val context: Context?) : TimerTask() {
+        override fun run() {
+            getWeatherFromServer(cityToLoad, context!!)
         }
     }
 }
