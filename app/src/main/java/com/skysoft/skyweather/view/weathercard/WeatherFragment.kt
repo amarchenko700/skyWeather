@@ -9,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.net.ConnectivityManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
@@ -52,17 +50,24 @@ class WeatherFragment : Fragment() {
         if (savedInstanceState != null) {
             city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
-            city = arguments?.getParcelable<City>(CITY_KEY)
-            if (hasInternet) {
-                viewModel.getWeather(city!!, requireContext())
-            }else{
-                Toast.makeText(requireContext(), resources.getText(R.string.text_no_internet), Toast.LENGTH_SHORT).show()
+            city = arguments?.getParcelable<City>(CITY_KEY)?.apply {
+                if (hasInternet) {
+                    viewModel.getWeather(this.latitude, this.longitude)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        resources.getText(R.string.text_no_internet),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
+
         }
     }
 
     private fun checkForInternet(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
             val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
@@ -87,7 +92,9 @@ class WeatherFragment : Fragment() {
                     tvDesriptionError.text = appState.error.toString()
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
-                            viewModel.getWeather(appState.city, requireContext())
+                            city?.let {
+                                viewModel.getWeather(it.latitude, it.longitude)
+                            }
                         }
                     )
                 }
@@ -117,7 +124,7 @@ class WeatherFragment : Fragment() {
         binding.run {
             loadingLayout.visibility = View.GONE
             unavailableWeather.visibility = View.GONE
-            city!!.let{
+            city!!.let {
                 cityName.text = it.name
                 cityCoordinates.text = "${it.latitude} ${it.longitude}"
             }

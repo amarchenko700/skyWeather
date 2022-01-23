@@ -34,18 +34,19 @@ class WeatherViewModel(
         return liveData
     }
 
-    private fun getWeatherFromServer(city: City, context: Context) {
-        val manager = WorkManager.getInstance(context)
-        val worker = OneTimeWorkRequest.Builder(MyWorker::class.java)
-            //   .setInitialDelay(5, TimeUnit.SECONDS)
-            .build()
-        manager.enqueue(worker)
+    private fun getWeatherFromServer(lat: Double, lon: Double) {
+//        val manager = WorkManager.getInstance(context)
+//        val worker = OneTimeWorkRequest.Builder(MyWorker::class.java)
+//            //   .setInitialDelay(5, TimeUnit.SECONDS)
+//            .build()
+//        manager.enqueue(worker)
+
 
         liveData.value = AppState.Loading(0)
         val handler = Handler(Looper.getMainLooper()!!)
         Thread {
             val url =
-                URL("https://api.weather.yandex.ru/v2/informers?lat=${city.latitude}&lon=${city.longitude}")
+                URL("https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon")
             val urlConnection = (url.openConnection() as HttpsURLConnection).apply {
                 requestMethod = "GET"
                 readTimeout = 10000
@@ -59,7 +60,7 @@ class WeatherViewModel(
                 }
             } catch (e: Exception) {
                 handler.post {
-                    liveData.postValue(AppState.Error(e, city))
+                    liveData.postValue(AppState.Error(e))
                 }
             } finally {
                 urlConnection.disconnect()
@@ -72,8 +73,8 @@ class WeatherViewModel(
         return reader.lines().collect(Collectors.joining("\n"))
     }
 
-    fun getWeather(city: City, context: Context) {
-        getWeatherFromServer(city, context)
+    fun getWeather(lat: Double, lon: Double) {
+        getWeatherFromServer(lat, lon)
     }
 
 }

@@ -4,12 +4,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
 import com.skysoft.skyweather.utils.MyReceiver
-import com.skysoft.skyweather.utils.MyWorker
 import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
 
 class MainActivity : AppCompatActivity() {
