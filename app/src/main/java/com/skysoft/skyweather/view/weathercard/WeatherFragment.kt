@@ -4,9 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +16,6 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.view.AppState
-import java.security.cert.Extension
 
 class WeatherFragment : Fragment() {
 
@@ -30,7 +26,6 @@ class WeatherFragment : Fragment() {
         get() {
             return _binding!!
         }
-    private var hasInternet = false
 
     val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -53,46 +48,22 @@ class WeatherFragment : Fragment() {
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
         initView(savedInstanceState)
+        requireActivity().registerReceiver(
+            receiver,
+            IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+        )
         requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
         requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
     }
 
     private fun initView(savedInstanceState: Bundle?) {
 
-        hasInternet = checkForInternet(requireContext())
         if (savedInstanceState != null) {
             city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
             city = arguments?.getParcelable<City>(CITY_KEY)?.apply {
-                if (hasInternet) {
-                    viewModel.getWeather(this, requireContext())
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        resources.getText(R.string.text_no_internet),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                viewModel.getWeather(this, requireContext())
             }
-        }
-    }
-
-    private fun checkForInternet(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork ?: return false
-            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-
-            return when {
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                else -> false
-            }
-        } else {
-            val networkInfo =
-                connectivityManager.activeNetworkInfo ?: return false
-            return networkInfo.isConnected
         }
     }
 
@@ -112,10 +83,19 @@ class WeatherFragment : Fragment() {
                     )
                 }
             }
+            is AppState.ErrorNoInternet -> {
+                binding.unavailableWeather.visibility = View.VISIBLE
+                Toast.makeText(
+                    requireContext(),
+                    appState.error,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             is AppState.Loading -> {
                 binding.run { loadingLayout.visibility = View.VISIBLE }
             }
             is AppState.SuccessLoadWeather -> {
+                binding.unavailableWeather.visibility = View.GONE
                 appState.let {
                     fillCardWeather(it.weatherDTO)
                 }

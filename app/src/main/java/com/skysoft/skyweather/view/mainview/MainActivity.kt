@@ -1,13 +1,9 @@
 package com.skysoft.skyweather.view.mainview
 
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
-import com.skysoft.skyweather.model.ACTION_ON_LOAD_WEATHER
-import com.skysoft.skyweather.utils.MyReceiver
 import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
 
 class MainActivity : AppCompatActivity() {
@@ -17,7 +13,6 @@ class MainActivity : AppCompatActivity() {
         get() {
             return _binding!!
         }
-    private val receiver = MyReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,15 +21,11 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             openListCities()
         }
-
-        registerReceiver(receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
-        registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        unregisterReceiver(receiver)
     }
 
     fun openListCities() {

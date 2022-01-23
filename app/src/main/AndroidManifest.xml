@@ -24,13 +24,6 @@
             android:name="com.skysoft.skyweather.view.mainview.MainActivity"
             android:exported="false" />
 
-        <receiver
-            android:name=".utils.MyReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.AIRPLANE_MODE" />
-            </intent-filter>
-        </receiver>
         <service android:name=".utils.InternetService">
 
         </service>

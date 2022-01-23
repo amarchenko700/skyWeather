@@ -8,4 +8,5 @@ sealed class AppState {
     data class LoadedCitiesList(val citiesList: List<City>): AppState()
     data class SuccessLoadWeather(val weatherDTO: WeatherDTO) : AppState()
     data class Error(val error:String) : AppState()
+    data class ErrorNoInternet(val error:String) : AppState()
 }
