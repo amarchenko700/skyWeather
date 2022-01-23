@@ -1,6 +1,9 @@
 package com.skysoft.skyweather.view.weathercard
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -14,10 +17,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
-import com.skysoft.skyweather.model.CITY_KEY
-import com.skysoft.skyweather.model.City
-import com.skysoft.skyweather.model.WeatherDTO
+import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.view.AppState
+import java.security.cert.Extension
 
 class WeatherFragment : Fragment() {
 
@@ -30,6 +32,12 @@ class WeatherFragment : Fragment() {
         }
     private var hasInternet = false
 
+    val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.onReceive(context, intent)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,18 +49,23 @@ class WeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        hasInternet = checkForInternet(requireContext())
-
         viewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
+        initView(savedInstanceState)
+        requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
+        requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
+    }
+
+    private fun initView(savedInstanceState: Bundle?) {
+
+        hasInternet = checkForInternet(requireContext())
         if (savedInstanceState != null) {
             city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
             city = arguments?.getParcelable<City>(CITY_KEY)?.apply {
                 if (hasInternet) {
-                    viewModel.getWeather(this.latitude, this.longitude)
+                    viewModel.getWeather(this, requireContext())
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -61,7 +74,6 @@ class WeatherFragment : Fragment() {
                     ).show()
                 }
             }
-
         }
     }
 
@@ -88,12 +100,13 @@ class WeatherFragment : Fragment() {
         when (appState) {
             is AppState.Error -> {
                 binding.run {
+                    unavailableWeather.visibility = View.VISIBLE
                     loadingLayout.visibility = View.GONE
                     tvDesriptionError.text = appState.error.toString()
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             city?.let {
-                                viewModel.getWeather(it.latitude, it.longitude)
+                                viewModel.getWeather(it, requireContext())
                             }
                         }
                     )
@@ -123,7 +136,6 @@ class WeatherFragment : Fragment() {
     private fun fillCardWeather(weatherDTO: WeatherDTO) {
         binding.run {
             loadingLayout.visibility = View.GONE
-            unavailableWeather.visibility = View.GONE
             city!!.let {
                 cityName.text = it.name
                 cityCoordinates.text = "${it.latitude} ${it.longitude}"
@@ -138,6 +150,7 @@ class WeatherFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        requireActivity().unregisterReceiver(receiver)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
