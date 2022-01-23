@@ -17,8 +17,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        timer = Timer()
-        timer.schedule(RemindTask(this), 3000)
+        Timer().schedule(RemindTask(this), 1000)
     }
 
     fun startMainActivity() {
@@ -27,14 +26,8 @@ class SplashScreenActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    class RemindTask(splashScreenActivity: SplashScreenActivity) : TimerTask() {
-        private lateinit var splashScreenActivity: SplashScreenActivity
-
-        init {
-            this.splashScreenActivity = splashScreenActivity
-        }
-
-        override fun run() {
+    class RemindTask(val splashScreenActivity: SplashScreenActivity) : TimerTask() {
+       override fun run() {
             splashScreenActivity.startMainActivity()
         }
     }

@@ -1,62 +1,92 @@
 package com.skysoft.skyweather.view.weathercard
 
-import android.os.Handler
-import android.os.Looper
+import android.content.Context
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.gson.Gson
-import com.skysoft.skyweather.BuildConfig
-import com.skysoft.skyweather.model.City
-import com.skysoft.skyweather.model.WeatherDTO
+import com.skysoft.skyweather.R
+import com.skysoft.skyweather.model.*
+import com.skysoft.skyweather.utils.InternetService
 import com.skysoft.skyweather.view.AppState
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
-import java.util.stream.Collectors
-import javax.net.ssl.HttpsURLConnection
+import java.util.*
 
 class WeatherViewModel(
     private val liveData: MutableLiveData<AppState> = MutableLiveData()
-    ) : ViewModel() {
+) : ViewModel() {
+
+    private var hasInternet = false
+    private lateinit var cityToLoad: City
 
     fun getLiveData(): LiveData<AppState> {
         return liveData
     }
 
-    private fun getWeatherFromServer(city: City) {
-        liveData.value = AppState.Loading(0)
-        val handler = Handler(Looper.getMainLooper()!!)
-        Thread {
-            val url =
-                URL("https://api.weather.yandex.ru/v2/informers?lat=${city.latitude}&lon=${city.longitude}")
-            val urlConnection = (url.openConnection() as HttpsURLConnection).apply {
-                requestMethod = "GET"
-                readTimeout = 10000
-                addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
-            }
-            try {
-                val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
-                val weather = Gson().fromJson(getLines(reader), WeatherDTO::class.java)
-                handler.post {
-                    liveData.postValue(AppState.SuccessLoadWeather(weather))
-                }
-            } catch (e: Exception) {
-                handler.post {
-                    liveData.postValue(AppState.Error(e, city))
-                }
-            } finally {
-                urlConnection.disconnect()
-            }
-
-        }.start()
+    private fun getWeatherFromServer(city: City, context: Context) {
+        hasInternet = checkForInternet(context)
+        cityToLoad = city
+        if (!hasInternet) {
+            liveData.value = AppState.Error(context.resources.getString(R.string.text_no_internet))
+        } else {
+            context.startService(Intent(context, InternetService::class.java).apply {
+                putExtra(CITY_KEY, city)
+            })
+        }
     }
 
-    private fun getLines(reader: BufferedReader): String {
-        return reader.lines().collect(Collectors.joining("\n"))
+    fun getWeather(city: City, context: Context) {
+        getWeatherFromServer(city, context)
     }
 
-    fun getWeather(city: City) {
-        getWeatherFromServer(city)
+    fun onReceive(context: Context?, intent: Intent?) {
+        intent?.let {
+            if (it.action == "android.intent.action.AIRPLANE_MODE") {
+                it.getBooleanExtra("state", false).let { stateAM ->
+                    if (!stateAM) {
+                        Toast.makeText(context, "Появился интернет!", Toast.LENGTH_SHORT).show()
+                        Timer().schedule(RemindTaskRequestToServer(context), 7000)
+                    }
+                }
+            } else if (it.action == ACTION_ON_LOAD_WEATHER) {
+                it.getParcelableExtra<WeatherDTO>(WEATHER_KEY)?.let { weatherDTO ->
+                    liveData.value = AppState.SuccessLoadWeather(weatherDTO)
+                }
+
+            } else if (it.action == ACTION_ON_ERROR_LOAD_WEATHER) {
+                it.getStringExtra(ERROR_KEY)?.let { errorString ->
+                    liveData.value = AppState.Error(errorString)
+                }
+            } else {
+            }
+        }
+    }
+
+    private fun checkForInternet(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+        } else {
+            val networkInfo =
+                connectivityManager.activeNetworkInfo ?: return false
+            return networkInfo.isConnected
+        }
+    }
+
+    inner class RemindTaskRequestToServer(val context: Context?) : TimerTask() {
+        override fun run() {
+            getWeatherFromServer(cityToLoad, context!!)
+        }
     }
 }
