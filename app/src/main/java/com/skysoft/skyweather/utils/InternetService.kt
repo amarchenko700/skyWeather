@@ -2,7 +2,6 @@ package com.skysoft.skyweather.utils
 
 import android.app.IntentService
 import android.content.Intent
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.gson.Gson
 import com.skysoft.skyweather.BuildConfig
 import com.skysoft.skyweather.model.*
