@@ -13,9 +13,6 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.utils.InternetService
 import com.skysoft.skyweather.view.AppState
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 class WeatherViewModel(
