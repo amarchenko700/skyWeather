@@ -8,9 +8,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import coil.ImageLoader
+import coil.load
+import coil.request.ImageRequest
+import coil.decode.SvgDecoder
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
@@ -124,7 +129,25 @@ class WeatherFragment : Fragment() {
                 feelsLikeValue.text = it.feelsLike.toString()
                 temperatureValue.text = it.temp.toString()
             }
+
+            headerIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+            weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weatherDTO.fact.icon}.svg")
+
         }
+    }
+
+    private fun ImageView.loadUrl(url: String) {
+
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry { add(SvgDecoder(this@loadUrl.context)) }
+            .build()
+
+        val request = ImageRequest.Builder(this.context)
+            .data(url)
+            .target(this)
+            .build()
+
+        imageLoader.enqueue(request)
     }
 
     override fun onDestroy() {
