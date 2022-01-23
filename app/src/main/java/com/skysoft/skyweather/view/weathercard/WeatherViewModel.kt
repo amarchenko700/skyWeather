@@ -25,7 +25,7 @@ class WeatherViewModel(
         return liveData
     }
 
-    private fun getWeatherFromServer(city: City, context: Context, timeDelay: Long = 0L) {
+    private fun getWeatherFromServer(city: City, context: Context) {
         hasInternet = checkForInternet(context)
         cityToLoad = city
         if (!hasInternet) {
@@ -38,7 +38,7 @@ class WeatherViewModel(
     }
 
     fun getWeather(city: City, context: Context) {
-        getWeatherFromServer(city, context, 1)
+        getWeatherFromServer(city, context)
     }
 
     fun onReceive(context: Context?, intent: Intent?) {
@@ -47,7 +47,7 @@ class WeatherViewModel(
                 it.getBooleanExtra("state", false).let { stateAM ->
                     if (!stateAM) {
                         Toast.makeText(context, "Появился интернет!", Toast.LENGTH_SHORT).show()
-                        getWeatherFromServer(cityToLoad, context!!, 15)
+                        getWeatherFromServer(cityToLoad, context!!)
                     }
                 }
             } else if (it.action == ACTION_ON_LOAD_WEATHER) {
