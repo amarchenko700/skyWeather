@@ -2,7 +2,6 @@ package com.skysoft.skyweather.utils
 
 import android.app.IntentService
 import android.content.Intent
-import com.skysoft.skyweather.BuildConfig
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.repository.RepositoryImpl
 import retrofit2.Call

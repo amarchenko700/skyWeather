@@ -15,7 +15,6 @@ import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.IS_RUSSIAN_KEY
 import com.skysoft.skyweather.model.WEATHER_KEY
 import com.skysoft.skyweather.view.AppStateListCities
-import com.skysoft.skyweather.view.AppStateWeather
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {

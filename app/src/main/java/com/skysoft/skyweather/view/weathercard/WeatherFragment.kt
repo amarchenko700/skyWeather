@@ -13,9 +13,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
+import coil.decode.SvgDecoder
 import coil.load
 import coil.request.ImageRequest
-import coil.decode.SvgDecoder
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding

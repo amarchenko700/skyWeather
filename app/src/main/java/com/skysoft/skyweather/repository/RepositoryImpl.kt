@@ -1,12 +1,10 @@
 package com.skysoft.skyweather.repository
 
-import android.content.Intent
 import com.skysoft.skyweather.BuildConfig
-import com.skysoft.skyweather.model.*
+import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.model.WeatherDTO
 import com.skysoft.skyweather.utils.AppContext
-import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Response
 
 class RepositoryImpl: RepositoryCitiesList, RepositoryWeather {
 

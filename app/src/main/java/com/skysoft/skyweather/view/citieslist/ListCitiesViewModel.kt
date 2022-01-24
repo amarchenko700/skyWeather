@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.skysoft.skyweather.repository.RepositoryImpl
 import com.skysoft.skyweather.view.AppStateListCities
-import com.skysoft.skyweather.view.AppStateWeather
 
 class ListCitiesViewModel(
     private val liveData: MutableLiveData<AppStateListCities> = MutableLiveData(),
