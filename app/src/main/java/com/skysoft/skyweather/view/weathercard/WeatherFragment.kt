@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
 import com.skysoft.skyweather.model.*
-import com.skysoft.skyweather.view.AppState
+import com.skysoft.skyweather.view.AppStateWeather
 
 class WeatherFragment : Fragment() {
 
@@ -72,13 +72,13 @@ class WeatherFragment : Fragment() {
         }
     }
 
-    private fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Error -> {
+    private fun renderData(appStateWeather: AppStateWeather) {
+        when (appStateWeather) {
+            is AppStateWeather.Error -> {
                 binding.run {
                     unavailableWeather.visibility = View.VISIBLE
                     loadingLayout.visibility = View.GONE
-                    tvDesriptionError.text = appState.error.toString()
+                    tvDesriptionError.text = appStateWeather.error.toString()
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             city?.let {
@@ -88,20 +88,20 @@ class WeatherFragment : Fragment() {
                     )
                 }
             }
-            is AppState.ErrorNoInternet -> {
+            is AppStateWeather.ErrorNoInternet -> {
                 binding.unavailableWeather.visibility = View.VISIBLE
                 Toast.makeText(
                     requireContext(),
-                    appState.error,
+                    appStateWeather.error,
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            is AppState.Loading -> {
+            is AppStateWeather.Loading -> {
                 binding.run { loadingLayout.visibility = View.VISIBLE }
             }
-            is AppState.SuccessLoadWeather -> {
+            is AppStateWeather.SuccessLoadWeather -> {
                 binding.unavailableWeather.visibility = View.GONE
-                appState.let {
+                appStateWeather.let {
                     fillCardWeather(it.weatherDTO)
                 }
             }

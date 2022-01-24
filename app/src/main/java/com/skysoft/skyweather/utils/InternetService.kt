@@ -4,6 +4,7 @@ import android.app.IntentService
 import android.content.Intent
 import com.skysoft.skyweather.BuildConfig
 import com.skysoft.skyweather.model.*
+import com.skysoft.skyweather.repository.RepositoryImpl
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,15 +31,7 @@ class InternetService(name: String = "") : IntentService(name) {
 
     override fun onHandleIntent(intent: Intent?) {
         intent?.getParcelableExtra<City>(CITY_KEY)?.let {
-            getWeatherFromServer(it)
-        }
-    }
-
-    private fun getWeatherFromServer(city: City) {
-        val retrofit = AppRepo().getRetrofit()
-        retrofit?.let {
-            it.getWeather(BuildConfig.WEATHER_API_KEY, city.latitude, city.longitude)
-                .enqueue(callback)
+            RepositoryImpl().getWeatherFromServer(it, callback)
         }
     }
 

@@ -7,7 +7,8 @@ import com.skysoft.skyweather.model.YANDEX_API_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class AppRepo: Application() {
+class AppContext: Application() {
+
     private val retrofit = Retrofit.Builder()
         .baseUrl(YANDEX_API_URL)
         .addConverterFactory(
