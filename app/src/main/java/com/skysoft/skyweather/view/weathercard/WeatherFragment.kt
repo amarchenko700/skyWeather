@@ -53,12 +53,13 @@ class WeatherFragment : Fragment() {
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
         initView(savedInstanceState)
-        requireActivity().registerReceiver(
-            receiver,
-            IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
-        )
-        requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
-        requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
+        requireActivity().let {
+            it.registerReceiver(receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
+            requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
+            requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
+            requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_NO_INTERNET))
+        }
+
     }
 
     private fun initView(savedInstanceState: Bundle?) {
@@ -98,6 +99,17 @@ class WeatherFragment : Fragment() {
             }
             is AppStateWeather.Loading -> {
                 binding.run { loadingLayout.visibility = View.VISIBLE }
+            }
+            is AppStateWeather.AvailabilityOfTheInternet -> {
+                if(appStateWeather.availability){
+                    context?.let { ct ->
+                        Toast.makeText(ct, getString(R.string.AvailabilityOfTheInternet), Toast.LENGTH_SHORT).show()
+                    }
+                }else{
+                    context?.let { ct ->
+                        Toast.makeText(ct, getString(R.string.NotAvailabilityOfTheInternet), Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
             is AppStateWeather.SuccessLoadWeather -> {
                 binding.unavailableWeather.visibility = View.GONE

@@ -2,10 +2,6 @@ package com.skysoft.skyweather.view.weathercard
 
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -42,9 +38,7 @@ class WeatherViewModel(
             if (it.action == "android.intent.action.AIRPLANE_MODE") {
                 it.getBooleanExtra("state", false).let { stateAM ->
                     if (!stateAM) {
-                        context?.let { ct ->
-                            Toast.makeText(ct, "Появился интернет!", Toast.LENGTH_SHORT).show()
-                        }
+                        liveData.value = AppStateWeather.AvailabilityOfTheInternet(true)
                         Timer().schedule(RemindTaskRequestToServer(context), 7000)
                     }
                 }
