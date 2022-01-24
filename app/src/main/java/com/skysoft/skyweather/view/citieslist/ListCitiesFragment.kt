@@ -14,7 +14,7 @@ import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.IS_RUSSIAN_KEY
 import com.skysoft.skyweather.model.WEATHER_KEY
-import com.skysoft.skyweather.view.AppState
+import com.skysoft.skyweather.view.AppStateListCities
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
 class ListCitiesFragment : Fragment(), OnItemClickListener {
@@ -89,10 +89,10 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         _binding = null
     }
 
-    private fun renderData(appState: AppState) {
-        with(appState) {
+    private fun renderData(appStateListCities: AppStateListCities) {
+        with(appStateListCities) {
             when (this) {
-                is AppState.LoadedCitiesList -> {
+                is AppStateListCities.LoadedCitiesList -> {
                     adapter.setData(this.citiesList)
                 }
                 else -> {}

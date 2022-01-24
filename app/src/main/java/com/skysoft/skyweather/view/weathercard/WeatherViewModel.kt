@@ -12,29 +12,32 @@ import androidx.lifecycle.ViewModel
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.utils.InternetService
-import com.skysoft.skyweather.view.AppState
+import com.skysoft.skyweather.view.AppStateWeather
 import java.util.*
 
 class WeatherViewModel(
-    private val liveData: MutableLiveData<AppState> = MutableLiveData()
+    private val liveData: MutableLiveData<AppStateWeather> = MutableLiveData()
 ) : ViewModel() {
 
     private var hasInternet = false
     private lateinit var cityToLoad: City
 
-    fun getLiveData(): LiveData<AppState> {
+    fun getLiveData(): LiveData<AppStateWeather> {
         return liveData
     }
 
-    private fun getWeatherFromServer(city: City, context: Context) {
-        hasInternet = checkForInternet(context)
-        cityToLoad = city
-        if (!hasInternet) {
-            liveData.value = AppState.Error(context.resources.getString(R.string.text_no_internet))
-        } else {
-            context.startService(Intent(context, InternetService::class.java).apply {
-                putExtra(CITY_KEY, city)
-            })
+    private fun getWeatherFromServer(city: City, context: Context?) {
+        context?.let {
+            hasInternet = checkForInternet(context)
+            cityToLoad = city
+            if (!hasInternet) {
+                liveData.value =
+                    AppStateWeather.Error(context.resources.getString(R.string.text_no_internet))
+            } else {
+                context.startService(Intent(context, InternetService::class.java).apply {
+                    putExtra(CITY_KEY, city)
+                })
+            }
         }
     }
 
@@ -47,18 +50,20 @@ class WeatherViewModel(
             if (it.action == "android.intent.action.AIRPLANE_MODE") {
                 it.getBooleanExtra("state", false).let { stateAM ->
                     if (!stateAM) {
-                        Toast.makeText(context, "Появился интернет!", Toast.LENGTH_SHORT).show()
+                        context?.let { ct ->
+                            Toast.makeText(ct, "Появился интернет!", Toast.LENGTH_SHORT).show()
+                        }
                         Timer().schedule(RemindTaskRequestToServer(context), 7000)
                     }
                 }
             } else if (it.action == ACTION_ON_LOAD_WEATHER) {
                 it.getParcelableExtra<WeatherDTO>(WEATHER_KEY)?.let { weatherDTO ->
-                    liveData.value = AppState.SuccessLoadWeather(weatherDTO)
+                    liveData.value = AppStateWeather.SuccessLoadWeather(weatherDTO)
                 }
 
             } else if (it.action == ACTION_ON_ERROR_LOAD_WEATHER) {
                 it.getStringExtra(ERROR_KEY)?.let { errorString ->
-                    liveData.value = AppState.Error(errorString)
+                    liveData.value = AppStateWeather.Error(errorString)
                 }
             } else {
             }
@@ -86,7 +91,7 @@ class WeatherViewModel(
 
     inner class RemindTaskRequestToServer(val context: Context?) : TimerTask() {
         override fun run() {
-            getWeatherFromServer(cityToLoad, context!!)
+            getWeatherFromServer(cityToLoad, context)
         }
     }
 }

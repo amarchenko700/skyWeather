@@ -8,15 +8,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.load
+import coil.request.ImageRequest
 import com.google.android.material.snackbar.Snackbar
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
 import com.skysoft.skyweather.model.*
-import com.skysoft.skyweather.view.AppState
+import com.skysoft.skyweather.view.AppStateWeather
 
 class WeatherFragment : Fragment() {
 
@@ -68,13 +72,13 @@ class WeatherFragment : Fragment() {
         }
     }
 
-    private fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Error -> {
+    private fun renderData(appStateWeather: AppStateWeather) {
+        when (appStateWeather) {
+            is AppStateWeather.Error -> {
                 binding.run {
                     unavailableWeather.visibility = View.VISIBLE
                     loadingLayout.visibility = View.GONE
-                    tvDesriptionError.text = appState.error.toString()
+                    tvDesriptionError.text = appStateWeather.error.toString()
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             city?.let {
@@ -84,20 +88,20 @@ class WeatherFragment : Fragment() {
                     )
                 }
             }
-            is AppState.ErrorNoInternet -> {
+            is AppStateWeather.ErrorNoInternet -> {
                 binding.unavailableWeather.visibility = View.VISIBLE
                 Toast.makeText(
                     requireContext(),
-                    appState.error,
+                    appStateWeather.error,
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            is AppState.Loading -> {
+            is AppStateWeather.Loading -> {
                 binding.run { loadingLayout.visibility = View.VISIBLE }
             }
-            is AppState.SuccessLoadWeather -> {
+            is AppStateWeather.SuccessLoadWeather -> {
                 binding.unavailableWeather.visibility = View.GONE
-                appState.let {
+                appStateWeather.let {
                     fillCardWeather(it.weatherDTO)
                 }
             }
@@ -125,7 +129,25 @@ class WeatherFragment : Fragment() {
                 feelsLikeValue.text = it.feelsLike.toString()
                 temperatureValue.text = it.temp.toString()
             }
+
+            headerIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+            weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weatherDTO.fact.icon}.svg")
+
         }
+    }
+
+    private fun ImageView.loadUrl(url: String) {
+
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry { add(SvgDecoder(this@loadUrl.context)) }
+            .build()
+
+        val request = ImageRequest.Builder(this.context)
+            .data(url)
+            .target(this)
+            .build()
+
+        imageLoader.enqueue(request)
     }
 
     override fun onDestroy() {

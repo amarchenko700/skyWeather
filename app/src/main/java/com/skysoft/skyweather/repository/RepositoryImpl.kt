@@ -1,6 +1,12 @@
-package com.skysoft.skyweather.model
+package com.skysoft.skyweather.repository
 
-class CitiesRepositoryImpl: CitiesRepository {
+import com.skysoft.skyweather.BuildConfig
+import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.model.WeatherDTO
+import com.skysoft.skyweather.utils.AppContext
+import retrofit2.Callback
+
+class RepositoryImpl: RepositoryCitiesList, RepositoryWeather {
 
     override fun getRussianCities(): List<City> {
         return listOf(
@@ -31,4 +37,14 @@ class CitiesRepositoryImpl: CitiesRepository {
         City("Пекин", 39.90419989999999, 116.40739630000007)
         )
     }
+
+    override fun getWeatherFromServer(city: City, callback: Callback<WeatherDTO>) {
+        val retrofit = AppContext().getRetrofit()
+        retrofit?.let {
+            it.getWeather(BuildConfig.WEATHER_API_KEY, city.latitude, city.longitude)
+                .enqueue(callback)
+        }
+    }
+
+
 }
