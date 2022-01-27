@@ -55,9 +55,9 @@ class WeatherFragment : Fragment() {
         initView(savedInstanceState)
         requireActivity().let {
             it.registerReceiver(receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
-            requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
-            requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
-            requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_NO_INTERNET))
+            it.registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
+            it.registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
+            it.registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_NO_INTERNET))
         }
 
     }
