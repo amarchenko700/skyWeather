@@ -1,9 +1,13 @@
 package com.skysoft.skyweather.repository
 
+import android.content.Context
+import android.content.Intent
 import com.skysoft.skyweather.BuildConfig
+import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.WeatherDTO
 import com.skysoft.skyweather.utils.AppContext
+import com.skysoft.skyweather.utils.InternetService
 import retrofit2.Callback
 
 class RepositoryImpl: RepositoryCitiesList, RepositoryWeather {
@@ -39,12 +43,17 @@ class RepositoryImpl: RepositoryCitiesList, RepositoryWeather {
     }
 
     override fun getWeatherFromServer(city: City, callback: Callback<WeatherDTO>) {
-        val retrofit = AppContext().getRetrofit()
-        retrofit?.let {
-            it.getWeather(BuildConfig.WEATHER_API_KEY, city.latitude, city.longitude)
+        AppContext().getRetrofit()?.let {
+            it.getWeatherFromRemoteServer(BuildConfig.WEATHER_API_KEY, city.latitude, city.longitude)
                 .enqueue(callback)
         }
     }
 
-
+    override fun getWeather(city: City, context: Context) {
+        context?.let {
+            context.startService(Intent(context, InternetService::class.java).apply {
+                putExtra(CITY_KEY, city)
+            })
+        }
+    }
 }

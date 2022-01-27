@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.skysoft.skyweather.model.*
-import com.skysoft.skyweather.utils.InternetService
+import com.skysoft.skyweather.repository.RepositoryImpl
 import com.skysoft.skyweather.view.AppStateWeather
 import java.util.*
 
@@ -15,22 +15,15 @@ class WeatherViewModel(
 ) : ViewModel() {
 
     private lateinit var cityToLoad: City
+    private val repositoryImpl: RepositoryImpl = RepositoryImpl()
 
     fun getLiveData(): LiveData<AppStateWeather> {
         return liveData
     }
 
-    private fun getWeatherFromServer(city: City, context: Context?) {
-        context?.let {
-            cityToLoad = city
-            context.startService(Intent(context, InternetService::class.java).apply {
-                putExtra(CITY_KEY, city)
-            })
-        }
-    }
-
-    fun getWeather(city: City, context: Context) {
-        getWeatherFromServer(city, context)
+    fun getWeatherFromRepository(city: City, context: Context) {
+        cityToLoad = city
+        repositoryImpl.getWeather(city, context)
     }
 
     fun onReceive(context: Context?, intent: Intent?) {
@@ -39,7 +32,7 @@ class WeatherViewModel(
                 it.getBooleanExtra("state", false).let { stateAM ->
                     if (!stateAM) {
                         liveData.value = AppStateWeather.AvailabilityOfTheInternet(true)
-                        Timer().schedule(RemindTaskRequestToServer(context), 7000)
+                        context?.let { ctx -> Timer().schedule(RemindTaskGetWeather(ctx), 7000) }
                     }
                 }
             } else if (it.action == ACTION_ON_LOAD_WEATHER) {
@@ -59,9 +52,9 @@ class WeatherViewModel(
         }
     }
 
-    inner class RemindTaskRequestToServer(val context: Context?) : TimerTask() {
+    inner class RemindTaskGetWeather(val context: Context) : TimerTask() {
         override fun run() {
-            getWeatherFromServer(cityToLoad, context)
+            getWeatherFromRepository(cityToLoad, context)
         }
     }
 }

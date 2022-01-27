@@ -68,7 +68,7 @@ class WeatherFragment : Fragment() {
             city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
             city = arguments?.getParcelable<City>(CITY_KEY)?.apply {
-                viewModel.getWeather(this, requireContext())
+                viewModel.getWeatherFromRepository(this, requireContext())
             }
         }
     }
@@ -83,7 +83,7 @@ class WeatherFragment : Fragment() {
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             city?.let {
-                                viewModel.getWeather(it, requireContext())
+                                viewModel.getWeatherFromRepository(it, requireContext())
                             }
                         }
                     )
