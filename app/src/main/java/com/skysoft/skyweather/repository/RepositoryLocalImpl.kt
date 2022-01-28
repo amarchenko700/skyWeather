@@ -37,12 +37,6 @@ class RepositoryLocalImpl : RepositoryCitiesList, RepositoryHistoryWeather {
         )
     }
 
-    override fun getAllHistoryWeather(): List<Weather> {
-        return convertListHistoryWeatherEntityToListWeather(
-            App.getHistoryWeatherDao().getAllHistoryWeather()
-        )
-    }
-
     override fun saveWeather(city: City, weather: Weather) {
         App.getHistoryWeatherDao().insert(
             convertWeatherToHistoryWeatherEntity(city, weather)
@@ -53,14 +47,6 @@ class RepositoryLocalImpl : RepositoryCitiesList, RepositoryHistoryWeather {
         return convertHistoryWeatherEntityToWeather(
             App.getHistoryWeatherDao().getHistoryWeather(cityName)
         )
-    }
-
-    private fun convertListHistoryWeatherEntityToListWeather(entityList: List<HistoryWeatherEntity>): List<Weather> {
-        return entityList.map {
-            Weather(
-                it.cityName, it.temperature, it.feelsLike, it.icon
-            )
-        }
     }
 
     private fun convertHistoryWeatherEntityToWeather(historyWeatherEntity: HistoryWeatherEntity?): Weather? {
