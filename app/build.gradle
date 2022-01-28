@@ -9,11 +9,11 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdk 31
 
-    buildFeatures{
+    buildFeatures {
         viewBinding true
     }
 
-    buildTypes.each{
+    buildTypes.each {
         Properties properties = new Properties()
         properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
         def api_key = properties.getProperty("yandex_weather_api_key", "")
