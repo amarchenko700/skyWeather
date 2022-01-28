@@ -34,7 +34,7 @@ class WeatherFragment : Fragment() {
 
     val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            viewModel.onReceive(context, intent)
+            viewModel.onReceive(intent)
         }
     }
 
@@ -68,7 +68,7 @@ class WeatherFragment : Fragment() {
             city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
             city = arguments?.getParcelable<City>(CITY_KEY)?.apply {
-                viewModel.getWeatherFromRepository(this, requireContext())
+                viewModel.getWeatherFromRepository(this)
             }
         }
     }
@@ -83,7 +83,7 @@ class WeatherFragment : Fragment() {
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             city?.let {
-                                viewModel.getWeatherFromRepository(it, requireContext())
+                                viewModel.getWeatherFromRepository(it)
                             }
                         }
                     )
@@ -101,20 +101,28 @@ class WeatherFragment : Fragment() {
                 binding.run { loadingLayout.visibility = View.VISIBLE }
             }
             is AppStateWeather.AvailabilityOfTheInternet -> {
-                if(appStateWeather.availability){
+                if (appStateWeather.availability) {
                     context?.let { ct ->
-                        Toast.makeText(ct, getString(R.string.AvailabilityOfTheInternet), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            ct,
+                            getString(R.string.AvailabilityOfTheInternet),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                }else{
+                } else {
                     context?.let { ct ->
-                        Toast.makeText(ct, getString(R.string.NotAvailabilityOfTheInternet), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            ct,
+                            getString(R.string.NotAvailabilityOfTheInternet),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
             is AppStateWeather.SuccessLoadWeather -> {
                 binding.unavailableWeather.visibility = View.GONE
                 appStateWeather.let {
-                    fillCardWeather(it.weatherDTO)
+                    fillCardWeather(it.weather)
                 }
             }
             else -> {}
@@ -130,20 +138,20 @@ class WeatherFragment : Fragment() {
             }.show()
     }
 
-    private fun fillCardWeather(weatherDTO: WeatherDTO) {
+    private fun fillCardWeather(weather: Weather) {
         binding.run {
             loadingLayout.visibility = View.GONE
             city!!.let {
                 cityName.text = it.name
                 cityCoordinates.text = "${it.latitude} ${it.longitude}"
             }
-            weatherDTO.fact.let {
+            weather.let {
                 feelsLikeValue.text = it.feelsLike.toString()
-                temperatureValue.text = it.temp.toString()
+                temperatureValue.text = it.temperature.toString()
             }
 
             headerIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
-            weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weatherDTO.fact.icon}.svg")
+            weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weather.icon}.svg")
 
         }
     }
