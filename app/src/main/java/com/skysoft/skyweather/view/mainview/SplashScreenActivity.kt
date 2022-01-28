@@ -27,7 +27,7 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     class RemindTask(val splashScreenActivity: SplashScreenActivity) : TimerTask() {
-       override fun run() {
+        override fun run() {
             splashScreenActivity.startMainActivity()
         }
     }
