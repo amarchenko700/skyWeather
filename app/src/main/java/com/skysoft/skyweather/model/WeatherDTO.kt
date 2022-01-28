@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 data class WeatherDTO(
     val now: Long,
 
-   @SerializedName( "now_dt")
+    @SerializedName("now_dt")
     val nowDt: String,
 
     val info: Info,
@@ -18,28 +18,28 @@ data class WeatherDTO(
 ) : Parcelable
 
 @Parcelize
-data class Fact (
-   @SerializedName( "obs_time")
+data class Fact(
+    @SerializedName("obs_time")
     val obsTime: Long,
 
     val temp: Long,
 
-   @SerializedName( "feels_like")
+    @SerializedName("feels_like")
     val feelsLike: Long,
 
     val icon: String,
     val condition: String,
 
-   @SerializedName( "wind_speed")
+    @SerializedName("wind_speed")
     val windSpeed: Double,
 
-   @SerializedName( "wind_dir")
+    @SerializedName("wind_dir")
     val windDir: String,
 
-   @SerializedName( "pressure_mm")
+    @SerializedName("pressure_mm")
     val pressureMm: Long,
 
-   @SerializedName( "pressure_pa")
+    @SerializedName("pressure_pa")
     val pressurePa: Long,
 
     val humidity: Long,
@@ -47,74 +47,74 @@ data class Fact (
     val polar: Boolean,
     val season: String,
 
-   @SerializedName( "wind_gust")
+    @SerializedName("wind_gust")
     val windGust: Double
 ) : Parcelable
 
 @Parcelize
-data class Forecast (
+data class Forecast(
     val date: String,
 
-   @SerializedName( "date_ts")
+    @SerializedName("date_ts")
     val dateTs: Long,
 
     val week: Long,
     val sunrise: String,
     val sunset: String,
 
-   @SerializedName( "moon_code")
+    @SerializedName("moon_code")
     val moonCode: Long,
 
-   @SerializedName( "moon_text")
+    @SerializedName("moon_text")
     val moonText: String,
 
     val parts: List<Part>
 ) : Parcelable
 
 @Parcelize
-data class Part (
-   @SerializedName( "part_name")
+data class Part(
+    @SerializedName("part_name")
     val partName: String,
 
-   @SerializedName( "temp_min")
+    @SerializedName("temp_min")
     val tempMin: Long,
 
-   @SerializedName( "temp_avg")
+    @SerializedName("temp_avg")
     val tempAvg: Long,
 
-   @SerializedName( "temp_max")
+    @SerializedName("temp_max")
     val tempMax: Long,
 
-   @SerializedName( "wind_speed")
+    @SerializedName("wind_speed")
     val windSpeed: Double,
 
-   @SerializedName( "wind_gust")
+    @SerializedName("wind_gust")
     val windGust: Double,
 
-   @SerializedName( "wind_dir")
+    @SerializedName("wind_dir")
     val windDir: String,
 
-   @SerializedName( "pressure_mm")
+    @SerializedName("pressure_mm")
     val pressureMm: Long,
 
-   @SerializedName( "pressure_pa")
+    @SerializedName("pressure_pa")
     val pressurePa: Long,
 
     val humidity: Long,
 
-   @SerializedName( "prec_mm")
+    @SerializedName("prec_mm")
     val precMm: Double,
 
-   @SerializedName( "prec_prob")
+    @SerializedName("prec_prob")
     val precProb: Long,
 
-   @SerializedName( "prec_period")
+    @SerializedName("prec_period")
     val precPeriod: Long,
 
     val icon: String,
     val condition: String,
 
-   @SerializedName( "feels_like")
+    @SerializedName("feels_like")
     val feelsLike: Long,
 
     val daytime: String,
@@ -122,7 +122,7 @@ data class Part (
 ) : Parcelable
 
 @Parcelize
-data class Info (
+data class Info(
     val url: String,
     val lat: Double,
     val lon: Double
