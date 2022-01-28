@@ -8,7 +8,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.model.*
-import com.skysoft.skyweather.repository.RepositoryImpl
+import com.skysoft.skyweather.repository.RepositoryRemoteImpl
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,9 +36,9 @@ class InternetService(name: String = "") : IntentService(name) {
     override fun onHandleIntent(intent: Intent?) {
         if (hasInternet()) {
             intent?.getParcelableExtra<City>(CITY_KEY)?.let {
-                RepositoryImpl().getWeatherFromServer(it, callback)
+                RepositoryRemoteImpl().getWeatherFromServer(it, callback)
             }
-        }else{
+        } else {
             applicationContext.sendBroadcast(Intent(ACTION_ON_ERROR_NO_INTERNET).apply {
                 this.putExtra(ERROR_KEY, resources.getString(R.string.text_no_internet))
             })
