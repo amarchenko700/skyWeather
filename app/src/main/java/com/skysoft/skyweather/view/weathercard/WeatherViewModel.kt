@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.repository.RepositoryLocalImpl
 import com.skysoft.skyweather.repository.RepositoryRemoteImpl
+import com.skysoft.skyweather.utils.App
 import com.skysoft.skyweather.view.AppStateWeather
 import java.util.*
 
@@ -24,12 +25,12 @@ class WeatherViewModel(
 
     fun getWeatherFromRepository(city: City) {
         cityToLoad = city
-        val weather = repositoryLocalImpl.getWeatherForCityName(city.name)
-        if (weather == null) {
-            repositoryRemoteImpl.getWeather(city)
-        } else {
-            liveData.value = AppStateWeather.SuccessLoadWeather(weather)
-        }
+        Thread{
+            val weather = repositoryLocalImpl.getWeatherForCityName(city.name)
+            App.getAppInstance().sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {
+                this.putExtra(WEATHER_KEY, weather)
+            })
+        }.start()
     }
 
     fun saveLoadedWeather(weather: Weather) {
@@ -61,6 +62,12 @@ class WeatherViewModel(
                     liveData.value = AppStateWeather.Error(errorString)
                 }
 
+            }else if(it.action == ACTION_GETTING_WEATHER_FROM_LOCAL_DB){
+                if (it.getParcelableExtra<Weather>(WEATHER_KEY) == null) {
+                    repositoryRemoteImpl.getWeather(cityToLoad)
+                } else {
+                    liveData.value = AppStateWeather.SuccessLoadWeather(it.getParcelableExtra<Weather>(WEATHER_KEY)!!)
+                }
             } else {
             }
         }

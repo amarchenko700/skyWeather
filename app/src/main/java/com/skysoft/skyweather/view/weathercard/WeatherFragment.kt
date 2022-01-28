@@ -58,6 +58,7 @@ class WeatherFragment : Fragment() {
             it.registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
             it.registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
             it.registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_NO_INTERNET))
+            it.registerReceiver(receiver, IntentFilter(ACTION_GETTING_WEATHER_FROM_LOCAL_DB))
         }
 
     }
