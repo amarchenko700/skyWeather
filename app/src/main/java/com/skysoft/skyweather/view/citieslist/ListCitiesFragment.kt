@@ -1,5 +1,6 @@
 package com.skysoft.skyweather.view.citieslist
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
-import com.skysoft.skyweather.model.CITY_KEY
-import com.skysoft.skyweather.model.City
-import com.skysoft.skyweather.model.IS_RUSSIAN_KEY
-import com.skysoft.skyweather.model.WEATHER_KEY
+import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.view.AppStateListCities
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
@@ -30,6 +28,10 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         }
 
     private lateinit var viewModel: ListCitiesViewModel
+
+    private val ap by lazy {
+        requireActivity().getPreferences(Context.MODE_PRIVATE)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +52,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
         if (savedInstanceState == null) {
+            isRussian = ap.getBoolean(KEY_IS_RUSSIAN_PREFERENCES, false)
             showCitisList()
         } else {
             clickedItem = savedInstanceState.getParcelable(WEATHER_KEY)
@@ -119,6 +122,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     private fun onFloatActionButtonClick() {
         isRussian = !isRussian
         showCitisList()
+        ap.edit().putBoolean(KEY_IS_RUSSIAN_PREFERENCES, isRussian).apply()
     }
 
     private fun openCityWeatherData(city: City) {
