@@ -1,6 +1,8 @@
 package com.skysoft.skyweather.view.weathercard
 
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,14 +29,18 @@ class WeatherViewModel(
         cityToLoad = city
         Thread{
             val weather = repositoryLocalImpl.getWeatherForCityName(city.name)
-            App.getAppInstance().sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {
-                this.putExtra(WEATHER_KEY, weather)
-            })
+            Handler(Looper.getMainLooper()).post {
+                App.getAppInstance().sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {
+                    this.putExtra(WEATHER_KEY, weather)
+                })
+            }
         }.start()
     }
 
     fun saveLoadedWeather(weather: Weather) {
-        repositoryLocalImpl.saveWeather(cityToLoad, weather)
+        Thread {
+            repositoryLocalImpl.saveWeather(cityToLoad, weather)
+        }.start()
     }
 
     fun onReceive(intent: Intent?) {
