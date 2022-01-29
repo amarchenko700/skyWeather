@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             openListCities()
         }
+        setSupportActionBar(binding.toolbar)
     }
 
     override fun onDestroy() {
