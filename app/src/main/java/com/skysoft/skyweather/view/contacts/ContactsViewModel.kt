@@ -10,4 +10,8 @@ class ContactsViewModel(
 
     fun getLiveData() = liveData
 
+    fun getContacts() {
+
+    }
+
 }

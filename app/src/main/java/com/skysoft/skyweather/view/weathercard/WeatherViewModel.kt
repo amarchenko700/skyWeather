@@ -27,12 +27,13 @@ class WeatherViewModel(
 
     fun getWeatherFromRepository(city: City) {
         cityToLoad = city
-        Thread{
+        Thread {
             val weather = repositoryLocalImpl.getWeatherForCityName(city.name)
             Handler(Looper.getMainLooper()).post {
-                App.getAppInstance().sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {
-                    this.putExtra(WEATHER_KEY, weather)
-                })
+                App.getAppInstance()
+                    .sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {
+                        this.putExtra(WEATHER_KEY, weather)
+                    })
             }
         }.start()
     }
@@ -68,11 +69,13 @@ class WeatherViewModel(
                     liveData.value = AppStateWeather.Error(errorString)
                 }
 
-            }else if(it.action == ACTION_GETTING_WEATHER_FROM_LOCAL_DB){
+            } else if (it.action == ACTION_GETTING_WEATHER_FROM_LOCAL_DB) {
                 if (it.getParcelableExtra<Weather>(WEATHER_KEY) == null) {
                     repositoryRemoteImpl.getWeather(cityToLoad)
                 } else {
-                    liveData.value = AppStateWeather.SuccessLoadWeather(it.getParcelableExtra<Weather>(WEATHER_KEY)!!)
+                    liveData.value = AppStateWeather.SuccessLoadWeather(
+                        it.getParcelableExtra<Weather>(WEATHER_KEY)!!
+                    )
                 }
             } else {
             }

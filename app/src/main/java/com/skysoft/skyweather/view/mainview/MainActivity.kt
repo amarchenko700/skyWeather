@@ -33,18 +33,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.contacts){
-            supportFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.fragment_container_framelayout,
-                    ContactsFragment.newInstance()
-                )
-                .addToBackStack(null)
-                .commit()
+        if (item.itemId == R.id.contacts) {
+            openFragmentContacts()
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun openFragmentContacts() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragment_container_framelayout,
+                ContactsFragment.newInstance()
+            )
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroy() {

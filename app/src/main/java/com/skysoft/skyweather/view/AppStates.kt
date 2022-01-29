@@ -18,5 +18,4 @@ sealed class AppStateListCities {
 
 sealed class AppStateContacts {
     data class Error(val error: String) : AppStateContacts()
-    data class SuccessLoadContacts(val s: String) : AppStateContacts()
 }

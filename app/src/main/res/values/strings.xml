@@ -15,4 +15,8 @@
     <string name="NotAvailabilityOfTheInternet">Интернета нет!</string>
     <string name="contacts">Контакты</string>
     <string name="toolbar_name">Погода в небесах</string>
+    <string name="title_dialog_rationale_read_contacts">Доступ к контактам</string>
+    <string name="explanation_read_contacts">Для приложения нужны контакты!</string>
+    <string name="grant_access">Предоставить</string>
+    <string name="deny_access">Запретить</string>
 </resources>
