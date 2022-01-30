@@ -11,6 +11,7 @@ import com.skysoft.skyweather.repository.RepositoryLocalImpl
 import com.skysoft.skyweather.repository.RepositoryRemoteImpl
 import com.skysoft.skyweather.utils.App
 import com.skysoft.skyweather.view.AppStateWeather
+import java.text.DateFormat
 import java.util.*
 
 class WeatherViewModel(
@@ -28,7 +29,10 @@ class WeatherViewModel(
     fun getWeatherFromRepository(city: City) {
         cityToLoad = city
         Thread {
-            val weather = repositoryLocalImpl.getWeatherForCityName(city.name)
+            val weather = repositoryLocalImpl.getWeatherForCityName(
+                city.name,
+                DateFormat.getDateInstance().format(Date())
+            )
             Handler(Looper.getMainLooper()).post {
                 App.getAppInstance()
                     .sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {

@@ -35,8 +35,10 @@ class InternetService(name: String = "") : IntentService(name) {
 
     override fun onHandleIntent(intent: Intent?) {
         if (hasInternet()) {
-            intent?.getParcelableExtra<City>(CITY_KEY)?.let {
-                RepositoryRemoteImpl().getWeatherFromServer(it, callback)
+            intent?.let { intent ->
+                intent.getParcelableExtra<City>(CITY_KEY)?.let { city ->
+                    RepositoryRemoteImpl().getWeatherFromServer(city, callback)
+                }
             }
         } else {
             applicationContext.sendBroadcast(Intent(ACTION_ON_ERROR_NO_INTERNET).apply {

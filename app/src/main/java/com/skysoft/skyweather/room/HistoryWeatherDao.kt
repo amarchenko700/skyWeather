@@ -16,6 +16,6 @@ interface HistoryWeatherDao {
     @Query("SELECT * FROM history_weather_entity")
     fun getAllHistoryWeather(): List<HistoryWeatherEntity>
 
-    @Query("SELECT * FROM history_weather_entity WHERE cityName IS :cityName")
-    fun getHistoryWeather(cityName: String): HistoryWeatherEntity
+    @Query("SELECT * FROM history_weather_entity WHERE cityName=:cityName AND dataDate=:currentDateString")
+    fun getHistoryWeather(cityName: String, currentDateString: String): HistoryWeatherEntity
 }
