@@ -3,9 +3,11 @@ package com.skysoft.skyweather.view.contacts
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -40,7 +42,40 @@ class ContactsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun openContacts() {
+    private fun getContacts() {
+        context?.let {
+            val contentResolver = it.contentResolver
+            val cursor = contentResolver.query(
+                ContactsContract.Contacts.CONTENT_URI,
+                null,
+                null,
+                null,
+                ContactsContract.Contacts.DISPLAY_NAME + " ASC"
+            )
+            cursor?.let { cursor ->
+                for (i in 0 until cursor.count) {
+                    cursor.moveToPosition(i)
+                    val indexColumnName =
+                        cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)
+                    if (indexColumnName >= 0) {
+                        val name = cursor.getString(indexColumnName)
+                        addView(name)
+                    }
+                }
+                cursor.close()
+            }
+        }
+    }
+
+    private fun addView(name: String) {
+        binding.containerForContacts.addView(TextView(requireContext()).apply {
+            text = name
+            textSize = 30f
+            setOnClickListener { onClickContact(name) }
+        })
+    }
+
+    private fun onClickContact(name: String) {
 
     }
 
@@ -50,7 +85,7 @@ class ContactsFragment : Fragment() {
                 ContextCompat.checkSelfPermission(
                     it,
                     Manifest.permission.READ_CONTACTS
-                ) == PackageManager.PERMISSION_GRANTED -> openContacts()
+                ) == PackageManager.PERMISSION_GRANTED -> getContacts()
                 shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) -> showDialogRationale()
                 else -> myRequestPermission()
             }
@@ -60,6 +95,26 @@ class ContactsFragment : Fragment() {
     val REQUEST_CODE = 999
     private fun myRequestPermission() {
         requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS), REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_CODE) {
+            when {
+                (grantResults[0] == PackageManager.PERMISSION_GRANTED) -> {
+                    getContacts()
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) -> {
+                    showDialogRationale()
+                }
+                else -> {
+                    binding.accessContactsDenied.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     private fun showDialogRationale() {

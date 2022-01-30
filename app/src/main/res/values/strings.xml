@@ -19,4 +19,6 @@
     <string name="explanation_read_contacts">Для приложения нужны контакты!</string>
     <string name="grant_access">Предоставить</string>
     <string name="deny_access">Запретить</string>
+    <string name="access_contacts_denied">Чтение контактов запрещено настройками</string>
+    <string name="image_weather">Картинка погоды</string>
 </resources>
