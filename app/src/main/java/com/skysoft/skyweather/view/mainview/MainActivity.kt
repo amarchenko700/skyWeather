@@ -1,5 +1,6 @@
 package com.skysoft.skyweather.view.mainview
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.skysoft.skyweather.R
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             openListCities()
         }
+        setSupportActionBar(binding.toolbar)
     }
 
     override fun onDestroy() {

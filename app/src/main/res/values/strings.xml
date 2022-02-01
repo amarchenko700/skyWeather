@@ -11,4 +11,8 @@
     <string name="TryAgain">Попробовать еще раз</string>
     <string name="Error">Error</string>
     <string name="text_no_internet">Нет интернета</string>
+    <string name="AvailabilityOfTheInternet">Появился интернет!</string>
+    <string name="NotAvailabilityOfTheInternet">Интернета нет!</string>
+    <string name="contacts">Контакты</string>
+    <string name="toolbar_name">Погода в небесах</string>
 </resources>

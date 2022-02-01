@@ -34,7 +34,7 @@ class WeatherFragment : Fragment() {
 
     val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            viewModel.onReceive(context, intent)
+            viewModel.onReceive(intent)
         }
     }
 
@@ -53,12 +53,14 @@ class WeatherFragment : Fragment() {
         viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
 
         initView(savedInstanceState)
-        requireActivity().registerReceiver(
-            receiver,
-            IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
-        )
-        requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
-        requireActivity().registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
+        requireActivity().let {
+            it.registerReceiver(receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
+            it.registerReceiver(receiver, IntentFilter(ACTION_ON_LOAD_WEATHER))
+            it.registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_LOAD_WEATHER))
+            it.registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_NO_INTERNET))
+            it.registerReceiver(receiver, IntentFilter(ACTION_GETTING_WEATHER_FROM_LOCAL_DB))
+        }
+
     }
 
     private fun initView(savedInstanceState: Bundle?) {
@@ -67,7 +69,7 @@ class WeatherFragment : Fragment() {
             city = savedInstanceState.getParcelable<City>(CITY_KEY)
         } else {
             city = arguments?.getParcelable<City>(CITY_KEY)?.apply {
-                viewModel.getWeather(this, requireContext())
+                viewModel.getWeatherFromRepository(this)
             }
         }
     }
@@ -82,7 +84,7 @@ class WeatherFragment : Fragment() {
                     root.snackbarWithAction(
                         getString(R.string.Error), getString(R.string.TryAgain), {
                             city?.let {
-                                viewModel.getWeather(it, requireContext())
+                                viewModel.getWeatherFromRepository(it)
                             }
                         }
                     )
@@ -99,10 +101,29 @@ class WeatherFragment : Fragment() {
             is AppStateWeather.Loading -> {
                 binding.run { loadingLayout.visibility = View.VISIBLE }
             }
+            is AppStateWeather.AvailabilityOfTheInternet -> {
+                if (appStateWeather.availability) {
+                    context?.let { ct ->
+                        Toast.makeText(
+                            ct,
+                            getString(R.string.AvailabilityOfTheInternet),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    context?.let { ct ->
+                        Toast.makeText(
+                            ct,
+                            getString(R.string.NotAvailabilityOfTheInternet),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
             is AppStateWeather.SuccessLoadWeather -> {
                 binding.unavailableWeather.visibility = View.GONE
                 appStateWeather.let {
-                    fillCardWeather(it.weatherDTO)
+                    fillCardWeather(it.weather)
                 }
             }
             else -> {}
@@ -118,20 +139,20 @@ class WeatherFragment : Fragment() {
             }.show()
     }
 
-    private fun fillCardWeather(weatherDTO: WeatherDTO) {
+    private fun fillCardWeather(weather: Weather) {
         binding.run {
             loadingLayout.visibility = View.GONE
             city!!.let {
                 cityName.text = it.name
                 cityCoordinates.text = "${it.latitude} ${it.longitude}"
             }
-            weatherDTO.fact.let {
+            weather.let {
                 feelsLikeValue.text = it.feelsLike.toString()
-                temperatureValue.text = it.temp.toString()
+                temperatureValue.text = it.temperature.toString()
             }
 
             headerIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
-            weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weatherDTO.fact.icon}.svg")
+            weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weather.icon}.svg")
 
         }
     }

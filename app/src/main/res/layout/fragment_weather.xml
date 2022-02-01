@@ -117,14 +117,14 @@
                 android:textColor="@color/red"
                 android:textSize="@dimen/feels_like_text_size"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/tvDesriptionError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/red"
-                tools:text="Описание ошибки"/>
+                tools:text="Описание ошибки" />
 
             <ImageView
                 android:layout_width="wrap_content"
