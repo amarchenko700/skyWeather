@@ -43,9 +43,9 @@ class RepositoryLocalImpl : RepositoryCitiesList, RepositoryHistoryWeather {
         )
     }
 
-    override fun getWeatherForCityName(cityName: String): Weather? {
+    override fun getWeatherForCityName(cityName: String, currentDateString: String): Weather? {
         return convertHistoryWeatherEntityToWeather(
-            App.getHistoryWeatherDao().getHistoryWeather(cityName)
+            App.getHistoryWeatherDao().getHistoryWeather(cityName, currentDateString)
         )
     }
 
@@ -55,7 +55,8 @@ class RepositoryLocalImpl : RepositoryCitiesList, RepositoryHistoryWeather {
                 it.cityName,
                 it.temperature,
                 it.feelsLike,
-                it.icon
+                it.icon,
+                it.dataDate
             )
         }
         return weather

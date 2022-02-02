@@ -15,4 +15,22 @@
     <string name="NotAvailabilityOfTheInternet">Интернета нет!</string>
     <string name="contacts">Контакты</string>
     <string name="toolbar_name">Погода в небесах</string>
+    <string name="title_dialog_rationale_read_contacts">Доступ к контактам</string>
+    <string name="explanation_read_contacts">Для приложения нужны контакты!</string>
+    <string name="grant_access">Предоставить</string>
+    <string name="deny_access">Запретить</string>
+    <string name="access_contacts_denied">Работа с контактами и звонками запрещена настройками</string>
+    <string name="image_weather">Картинка погоды</string>
+
+    <string name="need_permission_header">Нужен доступ к контактам и звонкам</string>
+    <string name="need_permission_text">Потому что иначе приложение не будет работать</string>
+    <string name="need_permission_text_again">Вам необходимо в настройках вручную указать эти права!</string>
+    <string name="need_permission_give">Да</string>
+    <string name="need_permission_dont_give">Нет</string>
+
+    <string name="call">Позвонить</string>
+    <string name="home">Домашний</string>
+    <string name="mobile">Мобильный</string>
+    <string name="work">Рабочий</string>
+    <string name="other">Другой</string>
 </resources>

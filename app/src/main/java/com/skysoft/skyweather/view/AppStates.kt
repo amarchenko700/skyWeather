@@ -15,3 +15,7 @@ sealed class AppStateWeather {
 sealed class AppStateListCities {
     data class LoadedCitiesList(val citiesList: List<City>) : AppStateListCities()
 }
+
+sealed class AppStateContacts {
+    data class Error(val error: String) : AppStateContacts()
+}

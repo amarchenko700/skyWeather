@@ -5,5 +5,5 @@ import com.skysoft.skyweather.model.Weather
 
 interface RepositoryHistoryWeather {
     fun saveWeather(city: City, weather: Weather)
-    fun getWeatherForCityName(cityName: String): Weather?
+    fun getWeatherForCityName(cityName: String, currentDateString: String): Weather?
 }

@@ -2,6 +2,8 @@ package com.skysoft.skyweather.utils
 
 import android.app.Application
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.GsonBuilder
 import com.skysoft.skyweather.model.WeatherApi
 import com.skysoft.skyweather.model.YANDEX_API_URL
@@ -46,6 +48,11 @@ class App : Application() {
             if (db == null) {
                 db = Room.databaseBuilder(getAppInstance(), HistoryDatabase::class.java, DB_NAME)
                     //.allowMainThreadQueries()
+                    .addMigrations(object : Migration(1, 2) {
+                        override fun migrate(database: SupportSQLiteDatabase) {
+                            database.execSQL("ALTER TABLE history_weather_entity ADD COLUMN dataDate TEXT NOT NULL DEFAULT ''")
+                        }
+                    })
                     .build()
             }
             return db!!.historyWeatherDao()

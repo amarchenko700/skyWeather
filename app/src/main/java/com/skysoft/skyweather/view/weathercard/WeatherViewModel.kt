@@ -11,6 +11,7 @@ import com.skysoft.skyweather.repository.RepositoryLocalImpl
 import com.skysoft.skyweather.repository.RepositoryRemoteImpl
 import com.skysoft.skyweather.utils.App
 import com.skysoft.skyweather.view.AppStateWeather
+import java.text.DateFormat
 import java.util.*
 
 class WeatherViewModel(
@@ -27,12 +28,16 @@ class WeatherViewModel(
 
     fun getWeatherFromRepository(city: City) {
         cityToLoad = city
-        Thread{
-            val weather = repositoryLocalImpl.getWeatherForCityName(city.name)
+        Thread {
+            val weather = repositoryLocalImpl.getWeatherForCityName(
+                city.name,
+                DateFormat.getDateInstance().format(Date())
+            )
             Handler(Looper.getMainLooper()).post {
-                App.getAppInstance().sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {
-                    this.putExtra(WEATHER_KEY, weather)
-                })
+                App.getAppInstance()
+                    .sendBroadcast(Intent(ACTION_GETTING_WEATHER_FROM_LOCAL_DB).apply {
+                        this.putExtra(WEATHER_KEY, weather)
+                    })
             }
         }.start()
     }
@@ -68,11 +73,13 @@ class WeatherViewModel(
                     liveData.value = AppStateWeather.Error(errorString)
                 }
 
-            }else if(it.action == ACTION_GETTING_WEATHER_FROM_LOCAL_DB){
+            } else if (it.action == ACTION_GETTING_WEATHER_FROM_LOCAL_DB) {
                 if (it.getParcelableExtra<Weather>(WEATHER_KEY) == null) {
                     repositoryRemoteImpl.getWeather(cityToLoad)
                 } else {
-                    liveData.value = AppStateWeather.SuccessLoadWeather(it.getParcelableExtra<Weather>(WEATHER_KEY)!!)
+                    liveData.value = AppStateWeather.SuccessLoadWeather(
+                        it.getParcelableExtra<Weather>(WEATHER_KEY)!!
+                    )
                 }
             } else {
             }

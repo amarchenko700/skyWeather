@@ -8,5 +8,6 @@ data class Weather(
     val cityName: String = "Москва",
     val temperature: Long = 20,
     val feelsLike: Long = 20,
-    val icon: String = "skc_n"
+    val icon: String = "skc_n",
+    val dataDate: String = ""
 ) : Parcelable
