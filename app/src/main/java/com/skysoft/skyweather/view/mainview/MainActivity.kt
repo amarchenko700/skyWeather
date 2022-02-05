@@ -6,7 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
-import com.skysoft.skyweather.map.MapsFragment
+import com.skysoft.skyweather.myMap.MapsFragment
 import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
 import com.skysoft.skyweather.view.contacts.ContactsFragment
 
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.contacts) {
             openFragmentContacts()
             return true
-        }else if(item.itemId == R.id.menu_google_maps){
+        } else if (item.itemId == R.id.menu_google_maps) {
             openGoogleMaps()
         }
         return super.onOptionsItemSelected(item)

@@ -39,4 +39,9 @@
     <string name="dialog_address_get_weather">Узнать погоду</string>
     <string name="no">Нет</string>
     <string name="google_maps">Карты</string>
+    <string name="btnSearch">Найти</string>
+    <string name="title_dialog_show_weather">Показ погоды</string>
+    <string name="message_show_weather">Показать погоду для выбранной точки?</string>
+    <string name="show">Показать</string>
+    <string name="dontShow">Не показывать</string>
 </resources>

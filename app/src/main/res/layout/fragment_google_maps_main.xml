@@ -31,7 +31,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="search" />
+            android:text="@string/btnSearch" />
+
     </LinearLayout>
 
     <include layout="@layout/fragment_maps" />

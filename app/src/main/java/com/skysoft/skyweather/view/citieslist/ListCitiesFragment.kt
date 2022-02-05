@@ -238,18 +238,18 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     }
 
     private fun getAddress(location: Location) {
-        Thread{
+        Thread {
             val geocoder = Geocoder(requireContext())
             val listAddress = geocoder.getFromLocation(location.latitude, location.longitude, 1)
-            if(listAddress.count() > 0){
-                requireActivity().runOnUiThread{
+            if (listAddress.count() > 0) {
+                requireActivity().runOnUiThread {
                     showAddressDialog(listAddress[0].getAddressLine(0), location)
                 }
             }
         }.start()
     }
 
-    private fun showAddressDialog(address: String, location: Location){
+    private fun showAddressDialog(address: String, location: Location) {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.dialog_address_title)
             .setMessage(address)
@@ -277,7 +277,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
                             REFRESH_PERIOD, MIN_DISTANCE, locationListener
                         )
                     }
-                }else{
+                } else {
                     locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)?.let {
                         getAddress(it)
                     }

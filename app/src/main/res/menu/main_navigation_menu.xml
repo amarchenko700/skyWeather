@@ -10,5 +10,5 @@
         android:id="@+id/menu_google_maps"
         android:title="@string/google_maps"
         android:icon="@android:drawable/ic_dialog_map"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>
