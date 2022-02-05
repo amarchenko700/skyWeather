@@ -6,16 +6,14 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
+import com.skysoft.skyweather.map.MapsFragment
 import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
 import com.skysoft.skyweather.view.contacts.ContactsFragment
 
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
-    private val binding: ActivityMainBinding
-        get() {
-            return _binding!!
-        }
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +34,21 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.contacts) {
             openFragmentContacts()
             return true
+        }else if(item.itemId == R.id.menu_google_maps){
+            openGoogleMaps()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun openGoogleMaps() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.fragment_container_framelayout,
+                MapsFragment()
+            )
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun openFragmentContacts() {
@@ -56,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         _binding = null
     }
 
-    fun openListCities() {
+    private fun openListCities() {
         supportFragmentManager
             .beginTransaction()
             .replace(

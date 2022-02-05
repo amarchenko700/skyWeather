@@ -17,6 +17,7 @@
     <string name="toolbar_name">Погода в небесах</string>
     <string name="title_dialog_rationale_read_contacts">Доступ к контактам</string>
     <string name="explanation_read_contacts">Для приложения нужны контакты!</string>
+    <string name="explanation_access_location">Для приложения нужен доступ к геолокации!</string>
     <string name="grant_access">Предоставить</string>
     <string name="deny_access">Запретить</string>
     <string name="access_contacts_denied">Работа с контактами и звонками запрещена настройками</string>
@@ -33,4 +34,9 @@
     <string name="mobile">Мобильный</string>
     <string name="work">Рабочий</string>
     <string name="other">Другой</string>
+    <string name="title_dialog_rationale_access_location">Доступ к геолокации</string>
+    <string name="dialog_address_title">Ваш адресс</string>
+    <string name="dialog_address_get_weather">Узнать погоду</string>
+    <string name="no">Нет</string>
+    <string name="google_maps">Карты</string>
 </resources>

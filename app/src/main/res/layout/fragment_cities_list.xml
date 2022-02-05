@@ -11,14 +11,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/list_cities_FAB"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/layout_margin_float_action_button"
-        android:src="@drawable/ic_russia"
-        app:maxImageSize="@dimen/max_image_size_float_action_button"
-        app:tint="@null" />
+        android:orientation="vertical">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/list_cities_FAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/layout_margin_float_action_button"
+            android:src="@drawable/ic_russia"
+            app:maxImageSize="@dimen/max_image_size_float_action_button"
+            app:tint="@null" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/locationFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/layout_margin_float_action_button"
+            android:src="@android:drawable/ic_dialog_map"
+            app:maxImageSize="@dimen/max_image_size_float_action_button"
+            app:tint="@null" />
+    </LinearLayout>
 </FrameLayout>
