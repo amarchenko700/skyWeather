@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "856911042050",
+    "project_id": "skyweather-9165f",
+    "storage_bucket": "skyweather-9165f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:856911042050:android:c13f59f1000506e72d391b",
+        "android_client_info": {
+          "package_name": "com.skysoft.skyweather"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "856911042050-rng56s3cl88pa5losrta00gveuqkgjid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj3Vb0gAoWv2UPDrDRlNp3yTpc08FJcnI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "856911042050-rng56s3cl88pa5losrta00gveuqkgjid.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
