@@ -52,8 +52,8 @@ class MyFCMService : FirebaseMessagingService() {
     companion object {
         private const val NOTIFICATION_ID_1 = 1
         private const val CHANNEL_ID_1 = "channel_id_1"
-        private const val KEY_TITLE = "KEY_TITLE"
-        private const val KEY_MESSAGE = "KEY_MESSAGE"
+        private const val KEY_TITLE = "myTitle"
+        private const val KEY_MESSAGE = "myMessage"
         private const val CHANNEL_NAME = "chanel 1"
         private const val CHANNEL_DESCRIPTION = "Description channel 1"
     }
