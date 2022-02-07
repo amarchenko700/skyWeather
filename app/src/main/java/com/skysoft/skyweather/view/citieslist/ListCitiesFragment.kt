@@ -17,7 +17,6 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,16 +24,16 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.view.AppStateListCities
+import com.skysoft.skyweather.view.BaseFragment
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
-class ListCitiesFragment : Fragment(), OnItemClickListener {
+class ListCitiesFragment :
+    BaseFragment<FragmentCitiesListBinding>(FragmentCitiesListBinding::inflate),
+    OnItemClickListener {
 
     private val adapter: CitiesListAdapter by lazy { CitiesListAdapter(this) }
     private var isRussian = true
     private var clickedItem: City? = null
-
-    private var _binding: FragmentCitiesListBinding? = null
-    private val binding get() = _binding!!
 
     private lateinit var viewModel: ListCitiesViewModel
 
@@ -50,8 +49,7 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
         arguments?.let {
             clickedItem = it.getParcelable(WEATHER_KEY)
         }
-        _binding = FragmentCitiesListBinding.inflate(layoutInflater, container, false)
-        return binding.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,11 +93,6 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
             }
         }
         viewModel.getCitiesList(isRussian)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private fun renderData(appStateListCities: AppStateListCities) {

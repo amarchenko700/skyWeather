@@ -21,21 +21,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import com.skysoft.skyweather.R
+import com.skysoft.skyweather.databinding.FragmentCitiesListBinding
 import com.skysoft.skyweather.databinding.FragmentContactsBinding
+import com.skysoft.skyweather.view.BaseFragment
 
-class ContactsFragment : Fragment() {
-
-    private var _binding: FragmentContactsBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentContactsBinding.inflate(layoutInflater, container, false)
-        return binding.root
-    }
+class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

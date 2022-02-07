@@ -18,27 +18,17 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentGoogleMapsMainBinding
+import com.skysoft.skyweather.databinding.FragmentWeatherBinding
 import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
 import com.skysoft.skyweather.model.openFragment
+import com.skysoft.skyweather.view.BaseFragment
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
-class MapsFragment : Fragment() {
-
-    private var _binding: FragmentGoogleMapsMainBinding? = null
-    private val binding get() = _binding!!
+class MapsFragment : BaseFragment<FragmentGoogleMapsMainBinding>(FragmentGoogleMapsMainBinding::inflate) {
 
     private lateinit var map: GoogleMap
     val markers = arrayListOf<Marker>()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentGoogleMapsMainBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,12 +38,6 @@ class MapsFragment : Fragment() {
         binding.buttonSearch.setOnClickListener {
             search()
         }
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private val callback = OnMapReadyCallback { googleMap ->
