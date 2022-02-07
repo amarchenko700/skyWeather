@@ -136,21 +136,10 @@ class ListCitiesFragment : Fragment(), OnItemClickListener {
     }
 
     private fun openCityWeatherData(city: City) {
-
         clickedItem = city
-
-        activity?.run {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.fragment_container_framelayout,
-                    WeatherFragment.newInstance(Bundle().apply {
-                        putParcelable(CITY_KEY, city)
-                    })
-                )
-                .addToBackStack(null)
-                .commit()
-        }
+        openFragment(activity, WeatherFragment.newInstance(Bundle().apply {
+            putParcelable(CITY_KEY, city)
+        }), true)
     }
 
     private fun checkPermission() {

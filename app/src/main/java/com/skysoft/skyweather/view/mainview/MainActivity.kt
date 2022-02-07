@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
+import com.skysoft.skyweather.model.openFragment
 import com.skysoft.skyweather.myMap.MapsFragment
 import com.skysoft.skyweather.view.citieslist.ListCitiesFragment
 import com.skysoft.skyweather.view.contacts.ContactsFragment
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (savedInstanceState == null) {
-            openFragment(ListCitiesFragment.newInstance(), false)
+            openFragment(this, ListCitiesFragment.newInstance(), false)
         }
         setSupportActionBar(binding.toolbar)
     }
@@ -38,20 +38,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.contacts) {
-            openFragment(ContactsFragment.newInstance(), true)
+            openFragment(this, ContactsFragment.newInstance(), true)
             return true
         } else if (item.itemId == R.id.menu_google_maps) {
-            openFragment(MapsFragment(), true)
+            openFragment(this, MapsFragment(), true)
             return true
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun openFragment(fragmentToOpen: Fragment, addToBackStack: Boolean) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragment_container_framelayout, fragmentToOpen)
-        if (addToBackStack) transaction.addToBackStack(null)
-        transaction.commit()
     }
 
 }

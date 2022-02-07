@@ -20,6 +20,7 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentGoogleMapsMainBinding
 import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.model.openFragment
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
 class MapsFragment : Fragment() {
@@ -116,21 +117,7 @@ class MapsFragment : Fragment() {
             .setTitle(R.string.title_dialog_show_weather)
             .setMessage(R.string.message_show_weather)
             .setPositiveButton(R.string.show) { _, _ ->
-                openWeatherFragment(location)
-            }
-            .setNegativeButton(R.string.dontShow) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
-
-    private fun openWeatherFragment(location: LatLng) {
-        activity?.run {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.fragment_container_framelayout,
+                openFragment(activity,
                     WeatherFragment.newInstance(Bundle().apply {
                         putParcelable(
                             CITY_KEY,
@@ -140,11 +127,14 @@ class MapsFragment : Fragment() {
                                 location.longitude
                             )
                         )
-                    })
-                )
-                .addToBackStack(null)
-                .commit()
-        }
+                    }),
+                true)
+            }
+            .setNegativeButton(R.string.dontShow) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun showDialogRationale() {
