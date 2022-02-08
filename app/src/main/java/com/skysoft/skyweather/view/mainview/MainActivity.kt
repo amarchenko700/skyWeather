@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
 import com.skysoft.skyweather.myMap.MapsFragment
@@ -20,9 +21,14 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (savedInstanceState == null) {
-            openListCities()
+            openFragment(ListCitiesFragment.newInstance(), false)
         }
         setSupportActionBar(binding.toolbar)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -32,48 +38,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.contacts) {
-            openFragmentContacts()
+            openFragment(ContactsFragment.newInstance(), true)
             return true
         } else if (item.itemId == R.id.menu_google_maps) {
-            openGoogleMaps()
+            openFragment(MapsFragment(), true)
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun openGoogleMaps() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.fragment_container_framelayout,
-                MapsFragment()
-            )
-            .addToBackStack(null)
-            .commit()
+    private fun openFragment(fragmentToOpen: Fragment, addToBackStack: Boolean) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container_framelayout, fragmentToOpen)
+        if (addToBackStack) transaction.addToBackStack(null)
+        transaction.commit()
     }
 
-    private fun openFragmentContacts() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.fragment_container_framelayout,
-                ContactsFragment.newInstance()
-            )
-            .addToBackStack(null)
-            .commit()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
-    private fun openListCities() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.fragment_container_framelayout,
-                ListCitiesFragment.newInstance()
-            )
-            .commit()
-    }
 }

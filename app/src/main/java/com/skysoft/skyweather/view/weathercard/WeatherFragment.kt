@@ -27,10 +27,7 @@ class WeatherFragment : Fragment() {
     private var city: City? = null
     private lateinit var viewModel: WeatherViewModel
     private var _binding: FragmentWeatherBinding? = null
-    private val binding: FragmentWeatherBinding
-        get() {
-            return _binding!!
-        }
+    private val binding get() = _binding!!
 
     val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
