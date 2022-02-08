@@ -41,6 +41,10 @@ class ListCitiesFragment :
         requireActivity().getPreferences(Context.MODE_PRIVATE)
     }
 
+    private val callbackAccessGranted = {
+        myRequestPermission()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -145,7 +149,12 @@ class ListCitiesFragment :
                     getLocation()
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                    showDialogRationale()
+                    showDialogRationale(
+                        requireContext(),
+                        callbackAccessGranted,
+                        getString(R.string.title_dialog_rationale_access_location),
+                        getString(R.string.explanation_access_location)
+                    )
                 }
                 else -> {
                     myRequestPermission()
@@ -165,7 +174,12 @@ class ListCitiesFragment :
                     getLocation()
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                    showDialogRationale()
+                    showDialogRationale(
+                        requireContext(),
+                        callbackAccessGranted,
+                        getString(R.string.title_dialog_rationale_access_location),
+                        getString(R.string.explanation_access_location)
+                    )
                 }
                 else -> {
                     openApplicationSettings()
@@ -189,20 +203,6 @@ class ListCitiesFragment :
     val REQUEST_CODE = 999
     private fun myRequestPermission() {
         requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
-    }
-
-    private fun showDialogRationale() {
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.title_dialog_rationale_access_location)
-            .setMessage(R.string.explanation_access_location)
-            .setPositiveButton(R.string.grant_access) { _, _ ->
-                myRequestPermission()
-            }
-            .setNegativeButton(R.string.deny_access) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
     }
 
     private val locationListener = object : LocationListener {
