@@ -9,9 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,22 +17,41 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
-import androidx.fragment.app.Fragment
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentContactsBinding
+import com.skysoft.skyweather.model.showDialogRationale
+import com.skysoft.skyweather.view.BaseFragment
 
-class ContactsFragment : Fragment() {
+class ContactsFragment : BaseFragment<FragmentContactsBinding>(FragmentContactsBinding::inflate) {
 
-    private var _binding: FragmentContactsBinding? = null
-    private val binding get() = _binding!!
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permitted ->
+        val read = permitted.getValue(Manifest.permission.READ_CONTACTS)
+        val call = permitted.getValue(Manifest.permission.CALL_PHONE)
+        when {
+            read && call -> {
+                getContacts()
+            }
+            !shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) -> {
+                showGoSettings()
+            }
+            !shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
+                showGoSettings()
+            }
+            else -> {
+                showDialogRationale(
+                    requireContext(),
+                    callbackAccessGranted,
+                    getString(R.string.title_dialog_rationale_read_contacts),
+                    getString(R.string.explanation_read_contacts)
+                )
+            }
+        }
+    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentContactsBinding.inflate(layoutInflater, container, false)
-        return binding.root
+    private val callbackAccessGranted = {
+        myRequestPermission()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,27 +78,6 @@ class ContactsFragment : Fragment() {
                 Manifest.permission.CALL_PHONE
             )
         )
-    }
-
-    private val permissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permitted ->
-        val read = permitted.getValue(Manifest.permission.READ_CONTACTS)
-        val call = permitted.getValue(Manifest.permission.CALL_PHONE)
-        when {
-            read && call -> {
-                getContacts()
-            }
-            !shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) -> {
-                showGoSettings()
-            }
-            !shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) -> {
-                showGoSettings()
-            }
-            else -> {
-                showDialogRationale()
-            }
-        }
     }
 
     private val settingsLauncher = registerForActivityResult(
@@ -215,21 +211,6 @@ class ContactsFragment : Fragment() {
     private fun makeCall(number: String) {
         val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
         startActivity(intent)
-    }
-
-    private fun showDialogRationale() {
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.title_dialog_rationale_read_contacts)
-            .setMessage(R.string.explanation_read_contacts)
-            .setPositiveButton(R.string.grant_access) { _, _ ->
-                myRequestPermission()
-            }
-            .setNegativeButton(R.string.deny_access) { dialog, _ ->
-                dialog.dismiss()
-                binding.accessContactsDenied.visibility = View.VISIBLE
-            }
-            .create()
-            .show()
     }
 
     companion object {

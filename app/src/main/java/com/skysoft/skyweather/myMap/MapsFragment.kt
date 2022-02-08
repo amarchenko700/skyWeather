@@ -1,16 +1,12 @@
 package com.skysoft.skyweather.myMap
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -20,24 +16,35 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentGoogleMapsMainBinding
 import com.skysoft.skyweather.model.CITY_KEY
 import com.skysoft.skyweather.model.City
+import com.skysoft.skyweather.model.openFragment
+import com.skysoft.skyweather.model.showDialogRationale
+import com.skysoft.skyweather.view.BaseFragment
 import com.skysoft.skyweather.view.weathercard.WeatherFragment
 
-class MapsFragment : Fragment() {
-
-    private var _binding: FragmentGoogleMapsMainBinding? = null
-    private val binding get() = _binding!!
+class MapsFragment :
+    BaseFragment<FragmentGoogleMapsMainBinding>(FragmentGoogleMapsMainBinding::inflate) {
 
     private lateinit var map: GoogleMap
     val markers = arrayListOf<Marker>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentGoogleMapsMainBinding.inflate(inflater, container, false)
-        return binding.root
+    private val callbackAccessGranted = {
+        checkPermissionForSetMyLocation()
     }
+
+    private val launcherPermissionForMyLocation =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { it ->
+            if (it) {
+                setMyLocation()
+            } else {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION))
+                    showDialogRationale(
+                        requireContext(),
+                        callbackAccessGranted,
+                        getString(R.string.title_dialog_rationale_access_location),
+                        getString(R.string.explanation_access_location)
+                    )
+            }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,12 +54,6 @@ class MapsFragment : Fragment() {
         binding.buttonSearch.setOnClickListener {
             search()
         }
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     private val callback = OnMapReadyCallback { googleMap ->
@@ -74,41 +75,7 @@ class MapsFragment : Fragment() {
     }
 
     private fun checkPermissionForSetMyLocation() {
-
-        when {
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                setMyLocation()
-            }
-            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                showDialogRationale()
-            }
-            else -> {
-                myRequestPermission()
-            }
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == REQUEST_CODE) {
-            when {
-                (grantResults[0] == PackageManager.PERMISSION_GRANTED) -> {
-                    setMyLocation()
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) -> {
-                    showDialogRationale()
-                }
-                else -> {
-
-                }
-            }
-        }
+        launcherPermissionForMyLocation.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
     private fun showWeatherDialog(location: LatLng) {
@@ -116,21 +83,8 @@ class MapsFragment : Fragment() {
             .setTitle(R.string.title_dialog_show_weather)
             .setMessage(R.string.message_show_weather)
             .setPositiveButton(R.string.show) { _, _ ->
-                openWeatherFragment(location)
-            }
-            .setNegativeButton(R.string.dontShow) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-            .show()
-    }
-
-    private fun openWeatherFragment(location: LatLng) {
-        activity?.run {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(
-                    R.id.fragment_container_framelayout,
+                openFragment(
+                    activity,
                     WeatherFragment.newInstance(Bundle().apply {
                         putParcelable(
                             CITY_KEY,
@@ -140,30 +94,15 @@ class MapsFragment : Fragment() {
                                 location.longitude
                             )
                         )
-                    })
+                    }),
+                    true
                 )
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    private fun showDialogRationale() {
-        AlertDialog.Builder(requireContext())
-            .setTitle(R.string.title_dialog_rationale_access_location)
-            .setMessage(R.string.explanation_access_location)
-            .setPositiveButton(R.string.grant_access) { _, _ ->
-                myRequestPermission()
             }
-            .setNegativeButton(R.string.deny_access) { dialog, _ ->
+            .setNegativeButton(R.string.dontShow) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
             .show()
-    }
-
-    val REQUEST_CODE = 999
-    private fun myRequestPermission() {
-        requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE)
     }
 
     private fun addMarker(location: LatLng) {

@@ -21,27 +21,17 @@ import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.FragmentWeatherBinding
 import com.skysoft.skyweather.model.*
 import com.skysoft.skyweather.view.AppStateWeather
+import com.skysoft.skyweather.view.BaseFragment
 
-class WeatherFragment : Fragment() {
+class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBinding::inflate) {
 
     private var city: City? = null
     private lateinit var viewModel: WeatherViewModel
-    private var _binding: FragmentWeatherBinding? = null
-    private val binding get() = _binding!!
 
-    val receiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             viewModel.onReceive(intent)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentWeatherBinding.inflate(layoutInflater, container, false)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,7 +47,6 @@ class WeatherFragment : Fragment() {
             it.registerReceiver(receiver, IntentFilter(ACTION_ON_ERROR_NO_INTERNET))
             it.registerReceiver(receiver, IntentFilter(ACTION_GETTING_WEATHER_FROM_LOCAL_DB))
         }
-
     }
 
     private fun initView(savedInstanceState: Bundle?) {
@@ -147,10 +136,8 @@ class WeatherFragment : Fragment() {
                 feelsLikeValue.text = it.feelsLike.toString()
                 temperatureValue.text = it.temperature.toString()
             }
-
             headerIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
             weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weather.icon}.svg")
-
         }
     }
 
@@ -170,7 +157,6 @@ class WeatherFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding = null
         requireActivity().unregisterReceiver(receiver)
     }
 
