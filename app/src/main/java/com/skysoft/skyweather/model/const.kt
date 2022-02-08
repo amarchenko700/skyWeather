@@ -12,3 +12,5 @@ const val YANDEX_API_KEY = "X-Yandex-API-Key"
 const val YANDEX_API_URL = "https://api.weather.yandex.ru/"
 const val YANDEX_API_URL_END_POINT = "v2/informers"
 const val KEY_IS_RUSSIAN_PREFERENCES = "KEY_IS_RUSSIAN_PREFERENCES"
+const val MIN_DISTANCE = 100f
+const val REFRESH_PERIOD = 60000L
