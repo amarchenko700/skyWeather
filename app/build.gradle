@@ -31,10 +31,25 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            Properties properties = new Properties()
+            properties.load(rootProject.file("password.properties").newDataInputStream())
+            def password = properties.getProperty("password")
+            def alias = properties.getProperty("alias")
+            storeFile file("G:\\GeekBrains\\projects\\skyWeather\\skyWeatherKey.jks")
+            storePassword = password
+            keyAlias alias
+            keyPassword =password
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            debuggable true
         }
     }
     compileOptions {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">skyWeather</string>
+    <string name="app_name">Погода в небе</string>
     <string name="text_splashscreen">Погода в небесах</string>
 
     <string name="temperature_label">Температура</string>

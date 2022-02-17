@@ -10,3 +10,5 @@
 local.properties
 /.idea/
 /apikey.properties
+/password.properties
+/skyWeatherKey.jks

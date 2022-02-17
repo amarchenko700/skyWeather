@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.messaging.FirebaseMessaging
 import com.skysoft.skyweather.R
 import com.skysoft.skyweather.databinding.ActivityMainBinding
 import com.skysoft.skyweather.model.openFragment
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
             openFragment(this, ListCitiesFragment.newInstance(), false)
         }
         setSupportActionBar(binding.toolbar)
+        FirebaseMessaging.getInstance().subscribeToTopic("all")
     }
 
     override fun onDestroy() {
