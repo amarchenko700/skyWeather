@@ -14,6 +14,7 @@ sealed class AppStateWeather {
 
 sealed class AppStateListCities {
     data class LoadedCitiesList(val citiesList: List<City>) : AppStateListCities()
+    //коммент
 }
 
 sealed class AppStateContacts {
