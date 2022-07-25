@@ -13,14 +13,11 @@ import retrofit2.Callback
 class RepositoryRemoteImpl : RepositoryWeather {
 
     override fun getWeatherFromServer(city: City, callback: Callback<WeatherDTO>) {
-        App().getRetrofit()?.let {
-            it.getWeatherFromRemoteServer(
-                BuildConfig.WEATHER_API_KEY,
-                city.latitude,
-                city.longitude
-            )
-                .enqueue(callback)
-        }
+        App().getRetrofit()?.getWeatherFromRemoteServer(
+            BuildConfig.WEATHER_API_KEY,
+            city.latitude,
+            city.longitude
+        )?.enqueue(callback)
     }
 
     override fun getWeather(city: City) {
